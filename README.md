@@ -1,8 +1,9 @@
 Boxes and Bubbles
 =================
 
-A simple-as-possible 2D physics rigid-body physics engine supporting for Elm.
-Supports only circles (bubbles) and rectangles (boxes)
+
+A simple-as-possible 2D physics rigid-body physics engine for Elm.
+Supports only bubbles (circles) and boxes (rectangles).
 
 It does this:
 
@@ -16,3 +17,7 @@ It doesn't do:
 * rotation
 * time-integrated movement
 * graphics
+
+## Current state
+
+Boxes aren't actually supported.
