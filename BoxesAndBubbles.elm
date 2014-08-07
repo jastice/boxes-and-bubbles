@@ -1,6 +1,7 @@
 module BoxesAndBubbles where
 
 import BoxesAndBubblesEngine (..)
+import Math2D (Vec2)
 
 -- constructors
 
@@ -28,7 +29,7 @@ box (w,h) pos velocity density restitution = {
   shape = Box (BoxShape (w/2,h/2))
   }
 
--- updates bodies with the signal
+-- updates bodies with the signal, using a fixed global force
 run: Vec2 -> [Body] -> Signal a -> Signal [Body]
 run gravity bodies tick = 
   let force t = gravity

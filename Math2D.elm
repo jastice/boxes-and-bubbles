@@ -2,11 +2,17 @@ module Math2D where
 
 -- just vector things
 
+type Vec2 = (Float,Float)
+
 plus: Vec2 -> Vec2 -> Vec2
 plus (x0,y0) (x1,y1) = (x0+x1,y0+y1)
 
 minus: Vec2 -> Vec2 -> Vec2
 minus (x0,y0) (x1,y1) = (x0-x1,y0-y1)
+
+-- element-wise vector multiplication
+mul: Vec2 -> Vec2 -> Vec2
+mul (x0,y0) (x1,y1) = (x0*x1, y0*y1)
 
 dot: Vec2 -> Vec2 -> Float
 dot (x0,y0) (x1,y1) = x0*x1 + y0*y1
@@ -23,3 +29,6 @@ abs2 (x,y) = (abs x, abs y)
 -- squared norm/length of ector
 lenSq: Vec2 -> Float
 lenSq (x,y) = x*x + y*y
+
+norm: Vec2 -> Vec2
+norm v = div2 v <| sqrt (lenSq v)

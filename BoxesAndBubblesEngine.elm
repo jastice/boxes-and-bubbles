@@ -3,9 +3,6 @@ module BoxesAndBubblesEngine where
 
 import Math2D (..)
 
--- plain old pair for coordinates, vectors
-type Vec2 = (Float,Float)
-
 type Body = {
   pos: Vec2, -- position reference
   velocity: Vec2, -- direction and speed
@@ -43,16 +40,17 @@ collisionBubbleBubble b0b1 b0 b1 =
 -- takes positions and vector and extension half-lengths of boxes
 collisionBoxBox: (Vec2,BoxShape) -> (Vec2,BoxShape) -> CollisionResult
 collisionBoxBox (pos0,b0) (pos1,b1) =
-  let n = minus pos1 pos0 |> abs2 -- distance between box centerpoints
-      (ox,oy) = minus (plus b0.extents b1.extents) n -- overlaps
+  let dist = minus pos1 pos0 -- vector between box centerpoints
+      (nx,ny) = dist
+      (ox,oy) = minus (plus b0.extents b1.extents) (abs2 dist) -- overlaps
 
-  in if ox > 0 
-     then CollisionResult (0,0) 0
-     else if ox > oy then
-          if nx < 0 then CollisionResult (-1,0) ox
-                    else CollisionResult (0,0) ox
-     else if ny < 0 then CollisionResult (0,-1) oy
-                    else CollisionResult (0,1) oy
+  in if ox > 0 && oy > 0 then
+       if ox < oy then
+            if nx < 0 then CollisionResult (-1,0) ox
+                      else CollisionResult (1,0) ox
+       else if ny < 0 then CollisionResult (0,-1) oy
+                      else CollisionResult (0,1) oy
+     else CollisionResult (1,0) 0
 
 collisionBoxBubble: BoxShape -> BubbleShape -> CollisionResult
 collisionBoxBubble box bubble = {normal = (0,0), penetration = 0}
@@ -112,6 +110,5 @@ step: Vec2 -> [Body] -> [Body]
 step force bodies = 
   map (update force) (collide [] bodies)
   -- resolve all collisions; optimization: broad phase
-  -- TODO apply forces
 
 
