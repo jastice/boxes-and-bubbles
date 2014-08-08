@@ -118,14 +118,20 @@ collide acc bodies =
       let (h1 :: t1) = collideWith h t []
       in collide (h1::acc) t1
 
--- update body position with its speed and apply an additional force
-update: Vec2 -> Body -> Body
-update (x,y) body = { body | pos <- plus body.pos body.velocity }
+-- update body position with its speed and apply additional forces
+update: Vec2 -> Vec2 -> Body -> Body
+update gravity force body = 
+  let accelGravity = if body.inverseMass == 0 then (0,0) else gravity
+      acceleration = mul2 force body.inverseMass -- f = ma => a = f/m
+      velocityNew = plus accelGravity <| plus body.velocity acceleration
+      posNew = plus body.pos body.velocity
+  in { body | pos <- posNew, velocity <- velocityNew }
 
--- applies accellerating force, does movement and resolves collisions for all the bubbles
-step: Vec2 -> [Body] -> [Body]      
-step force bodies = 
-  map (update force) (collide [] bodies)
-  -- resolve all collisions; optimization: broad phase
+-- applies gravity, ambient force, does movement and resolves collisions for all the bubbles
+-- gravity: global force, ignores mass unless it's infinite
+-- force: global ambient force, uses mass
+step: Vec2 -> Vec2 -> [Body] -> [Body]      
+step gravity force bodies = 
+  map (update gravity force) (collide [] bodies)
 
 

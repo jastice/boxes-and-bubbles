@@ -34,19 +34,19 @@ box (w,h) pos velocity density restitution = {
 
 -- bounding box made up of multiple boxes with
 -- arguments (width,height) center thickness
-bounds: Vec2 -> Vec2 -> Float -> [Body]
-bounds (w,h) (cx,cy) thickness = 
+bounds: Vec2 -> Vec2 -> Float -> Float -> [Body]
+bounds (w,h) (cx,cy) thickness restitution = 
   let (wExt,hExt) = (w/2,h/2)
       halfThick = thickness/2
   in [
-    box (w,thickness) (cx, hExt+halfThick) (0,0) inf 1,
-    box (w,thickness) (cx, -(hExt+halfThick)) (0,0) inf 1,
-    box (thickness,h) (wExt+halfThick, cy) (0,0) inf 1,
-    box (thickness,h) (-(hExt+halfThick), cy) (0,0) inf 1
+    box (w,thickness) (cx, hExt+halfThick) (0,0) inf restitution,
+    box (w,thickness) (cx, -(hExt+halfThick)) (0,0) inf restitution,
+    box (thickness,h) (wExt+halfThick, cy) (0,0) inf restitution,
+    box (thickness,h) (-(hExt+halfThick), cy) (0,0) inf restitution
   ]
 
 -- updates bodies with the signal, using a fixed global force
 run: Vec2 -> [Body] -> Signal a -> Signal [Body]
 run gravity bodies tick = 
-  let force t = gravity
-  in foldp step bodies (force <~ tick)
+  let force t = (0,0)
+  in foldp (step gravity) bodies (force <~ tick)
