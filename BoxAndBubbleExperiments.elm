@@ -43,20 +43,21 @@ bodyInfo restitution inverseMass =
 drawBody {pos,velocity,inverseMass,restitution,shape} = 
   let veloLine = segment (0,0) (mul2 velocity 5) |> traced (solid red)
       info = bodyInfo restitution inverseMass
-  in case shape of
-    Bubble radius ->
-      group [
-        circle radius |> outlined (solid black),
-        veloLine, 
-        info |> move (0,radius+16)
-        ] |> move pos 
-    Box extents -> 
-      let (w,h) = extents
-      in group [
-        rect (w*2) (h*2) |> outlined (solid black),
-        veloLine, 
-        info |> move (0,h+16)
-      ] |> move pos 
+      ready = case shape of
+        Bubble radius ->
+          group [
+            circle radius |> outlined (solid black),
+            veloLine, 
+            info |> move (0,radius+16)
+            ]
+        Box extents -> 
+          let (w,h) = extents
+          in group [
+            rect (w*2) (h*2) |> outlined (solid black),
+            veloLine, 
+            info |> move (0,h+16)
+          ] 
+  in move pos ready  
 
 scene bodies = 
   let drawnBodies = map drawBody bodies 
