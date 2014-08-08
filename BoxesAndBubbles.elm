@@ -3,6 +3,9 @@ module BoxesAndBubbles where
 import BoxesAndBubblesEngine (..)
 import Math2D (Vec2)
 
+
+inf = 1/0
+
 -- constructors
 
 -- basic bubble with some defaults
@@ -28,6 +31,19 @@ box (w,h) pos velocity density restitution = {
   restitution = restitution,
   shape = Box (w/2,h/2)
   }
+
+-- bounding box made up of multiple boxes with
+-- arguments (width,height) center thickness
+bounds: Vec2 -> Vec2 -> Float -> [Body]
+bounds (w,h) (cx,cy) thickness = 
+  let (wExt,hExt) = (w/2,h/2)
+      halfThick = thickness/2
+  in [
+    box (w,thickness) (cx, hExt+halfThick) (0,0) inf 1,
+    box (w,thickness) (cx, -(hExt+halfThick)) (0,0) inf 1,
+    box (thickness,h) (wExt+halfThick, cy) (0,0) inf 1,
+    box (thickness,h) (-(hExt+halfThick), cy) (0,0) inf 1
+  ]
 
 -- updates bodies with the signal, using a fixed global force
 run: Vec2 -> [Body] -> Signal a -> Signal [Body]
