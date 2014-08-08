@@ -5,17 +5,23 @@ import Math2D (mul2)
 
 inf = 1/0
 
-someBubbles = [ 
+--box: (w,h) pos velocity density restitution 
+--bubble: radius pos velocity density restitution
+
+someThings = [ 
   basicBubble 30 (-80,0) (1.5,0),
-  bubble 70 (80,0) (0,0) inf 1,
+  bubble 70 (80,0) (0,0) inf 0,
   basicBubble 40 (0,200) (0.4,-3.0),
-  bubble 90 (300,-300) (-2,0) 0.1 0.9,
+  bubble 80 (300,-280) (-2,0) 0.1 0.9,
   bubble 10 (300,300) (-4,-4) 1 1,
-  basicBubble 40 (200,200) (-5,-1)
-  ] ++ bounds (750,750) (0,0) 15 1
+  basicBubble 40 (200,200) (-5,-1),
+  box (100,100) (300,0) (0,0) 1 1,
+  box (20,20) (-200,0) (3,0) 1 1,
+  box (20,40) (200,-200) (-1,-1) 1 1
+  ] ++ bounds (750,750) (0,0) 50 0.8
 
 someBoxes = [
---box: (w,h) pos velocity density restitution 
+
   box (100,100) (0,0) (0,0) 1 1,
   box (20,20) (-200,0) (3,0) 1 1,
   box (20,40) (200,200) (-1,-1) 1 1,
@@ -24,7 +30,6 @@ someBoxes = [
   ] ++ bounds (700,700) (0,0) 15 0.6
 
 allIsStill = [
---box: (w,h) pos velocity density restitution 
   box (100,100) (0,0) (0,0) 1 1,
   box (20,20) (-200,0) (0,0) 1 1,
   box (20,40) (200,200) (0,0) 1 1,
@@ -34,7 +39,8 @@ allIsStill = [
 
 someMixed = [
   bubble 30 (-200,0) (4,0) 1 1,
-  box (20,40) (0,0) (0,0) 1 1
+  box (20,40) (0,0) (-2,0) 1 1,
+  box (30,14) (100,100) (-4,-2) 1 1
   ]
 
 bodyInfo restitution inverseMass = 
@@ -64,11 +70,12 @@ scene bodies =
   let drawnBodies = map drawBody bodies 
   in collage 800 800 drawnBodies
 
-force t = ((sin <| radians (t/1000)) * 50, 0)
-tick0 = force <~ foldp (+) 0 (fps 20)
+constforce t = (0,0)
+sinforce t = ((sin <| radians (t/1000)) * 50, 0)
+tick0 = constforce <~ foldp (+) 0 (fps 20)
 --tick0 = force <~ foldp (+) 0 (fps 2)
 --tick1 = force <~ count Mouse.clicks
 
 --main = asText <~ tick0 
-main = scene <~ foldp (step (0,0.05)) allIsStill tick0
+main = scene <~ foldp (step (0,-0.05)) someThings tick0
 --main = asText <~ foldp step someMixed tick2

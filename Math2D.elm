@@ -28,6 +28,9 @@ mul2 (x,y) a = (x*a, y*a)
 abs2: Vec2 -> Vec2
 abs2 (x,y) = (abs x, abs y)
 
+neg: Vec2 -> Vec2
+neg (x,y) = (-x,-y)
+
 -- squared norm/length of vector
 lenSq: Vec2 -> Float
 lenSq (x,y) = x*x + y*y

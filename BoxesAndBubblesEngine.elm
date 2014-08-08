@@ -77,9 +77,13 @@ collision body0 body1 = case (body0.shape, body1.shape) of
   (Bubble b0, Bubble b1) -> 
     let b0b1 = minus body1.pos body0.pos
     in collisionBubbleBubble b0b1 b0 b1
-  (Box b0, Box b1) -> collisionBoxBox (body0.pos,b0) (body1.pos,b1)
-  (Box box, Bubble bubble) -> collisionBoxBubble (body0.pos, box) (body1.pos, bubble)
-  (Bubble bubble, Box box) -> collisionBoxBubble (body1.pos, box) (body0.pos, bubble)
+  (Box b0, Box b1) -> 
+    collisionBoxBox (body0.pos,b0) (body1.pos,b1)
+  (Box box, Bubble bubble) -> 
+    collisionBoxBubble (body0.pos, box) (body1.pos, bubble)
+  (Bubble bubble, Box box) -> 
+    let res = collisionBoxBubble (body1.pos, box) (body0.pos, bubble)
+    in { res | normal <- neg res.normal }
 
 
 -- modify bodies' trajectories when they collide
