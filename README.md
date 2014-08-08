@@ -17,7 +17,4 @@ It doesn't do:
 * rotation
 * time-integrated movement
 * graphics
-
-## Current state
-
-Boxes aren't actually supported.
+* colliding unstoppable forces with immovable objects (infinite masses will be glitchy)
