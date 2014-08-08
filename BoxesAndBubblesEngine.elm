@@ -11,11 +11,9 @@ type Body = {
   shape: Shape
 }
 
-type BubbleShape = { radius: Float }
--- extents are half width/height from the center
-type BoxShape = { extents: Vec2 }
-
-data Shape = Box BoxShape | Bubble BubbleShape
+data Shape = 
+    Box Vec2 -- vector of extents (half-widths)
+  | Bubble Float -- radius
 
 
 -- collision calculation for different types of bodies
@@ -23,37 +21,56 @@ data Shape = Box BoxShape | Bubble BubbleShape
 type CollisionResult = { normal: Vec2, penetration: Float }
 
 -- calculate collision normal, penetration depth of a collision among bubbles
--- takes distance vector b0b1 and the bubbles as argument
+-- takes distance vector b0b1 and the bubble shapes as argument
 -- simple optimization: doesn't compute sqrt unless necessary
-collisionBubbleBubble: Vec2 -> BubbleShape -> BubbleShape -> CollisionResult
-collisionBubbleBubble b0b1 b0 b1 = 
+collisionBubbleBubble: Vec2 -> Float -> Float -> CollisionResult
+collisionBubbleBubble b0b1 radius0 radius1 = 
   let
-    radiusb0b1 = b0.radius+b1.radius
+    radiusb0b1 = radius0 + radius1
     distanceSq = lenSq b0b1
   in
-    if | distanceSq == 0 -> { normal = (1,0), penetration = b0.radius } -- same position, arbitrary normal
-       | distanceSq >= radiusb0b1*radiusb0b1 -> { normal = (1,0), penetration = 0 } -- no intersection, arbitrary normal
+    if | distanceSq == 0 -> CollisionResult (1,0) radius0 -- same position, arbitrary normal
+       | distanceSq >= radiusb0b1*radiusb0b1 -> CollisionResult (1,0) 0 -- no intersection, arbitrary normal
        | otherwise -> 
           let d = sqrt distanceSq
-          in { normal = div2 b0b1 d, penetration = radiusb0b1 - d }
+          in CollisionResult (div2 b0b1 d) (radiusb0b1 - d)
 
 -- takes positions and vector and extension half-lengths of boxes
-collisionBoxBox: (Vec2,BoxShape) -> (Vec2,BoxShape) -> CollisionResult
-collisionBoxBox (pos0,b0) (pos1,b1) =
+collisionBoxBox: (Vec2,Vec2) -> (Vec2,Vec2) -> CollisionResult
+collisionBoxBox (pos0,extents0) (pos1,extents1) =
   let dist = minus pos1 pos0 -- vector between box centerpoints
       (nx,ny) = dist
-      (ox,oy) = minus (plus b0.extents b1.extents) (abs2 dist) -- overlaps
+      (ox,oy) = minus (plus extents0 extents1) (abs2 dist) -- overlaps
+   in if ox > 0 && oy > 0 then
+        if ox < oy then
+             if nx < 0 then CollisionResult (-1,0) ox
+                       else CollisionResult (1,0) ox
+        else if ny < 0 then CollisionResult (0,-1) oy
+                       else CollisionResult (0,1) oy
+      else CollisionResult (1,0) 0
 
-  in if ox > 0 && oy > 0 then
-       if ox < oy then
-            if nx < 0 then CollisionResult (-1,0) ox
-                      else CollisionResult (1,0) ox
-       else if ny < 0 then CollisionResult (0,-1) oy
-                      else CollisionResult (0,1) oy
-     else CollisionResult (1,0) 0
+collisionBoxBubble: (Vec2,Vec2) -> (Vec2,Float) -> CollisionResult
+collisionBoxBubble (posBox,boxExtents) (posBubble,bubbleRadius) = 
+  let dist = minus posBubble posBox
+      (dx,dy) = dist
+      (boxX,boxY) = boxExtents
+      c = (clamp -boxX boxX dx, clamp -boxY boxY dy) -- closest point on box to center of bubble
+      (cx,cy) = c
+      (closest,inside) = 
+        if dist /= c then (c,False) --circle is outside
+        else -- circle is inside, clamp center to closest edge
+          if abs dx > abs dy then
+            if cx > 0 then ((boxX,cy),True) else ((-boxX,cy),True)
+          else
+            if cy > 0 then ((cx,boxY),True) else ((cx,-boxY),True)
+      normal = minus dist closest
+      normalLenSq = lenSq normal
+   in if normalLenSq > bubbleRadius*bubbleRadius && (not inside) then CollisionResult (1,0) 0
+      else let penetration =  bubbleRadius + sqrt normalLenSq
+            in if inside then CollisionResult (mul2 (norm normal) -1) penetration
+                         else CollisionResult (norm normal) penetration
 
-collisionBoxBubble: BoxShape -> BubbleShape -> CollisionResult
-collisionBoxBubble box bubble = {normal = (0,0), penetration = 0}
+
 
 collision: Body -> Body -> CollisionResult
 collision body0 body1 = case (body0.shape, body1.shape) of
@@ -61,8 +78,8 @@ collision body0 body1 = case (body0.shape, body1.shape) of
     let b0b1 = minus body1.pos body0.pos
     in collisionBubbleBubble b0b1 b0 b1
   (Box b0, Box b1) -> collisionBoxBox (body0.pos,b0) (body1.pos,b1)
-  (Box box, Bubble bubble) -> collisionBoxBubble box bubble
-  (Bubble bubble, Box box) -> collisionBoxBubble box bubble
+  (Box box, Bubble bubble) -> collisionBoxBubble (body0.pos, box) (body1.pos, bubble)
+  (Bubble bubble, Box box) -> collisionBoxBubble (body1.pos, box) (body0.pos, bubble)
 
 
 -- modify bodies' trajectories when they collide

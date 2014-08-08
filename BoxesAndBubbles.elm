@@ -17,7 +17,7 @@ bubble radius pos velocity density restitution = {
   velocity = velocity, 
   inverseMass = 1/(pi*radius*radius*density), 
   restitution = restitution,
-  shape = Bubble (BubbleShape radius)
+  shape = Bubble radius
   }
 
 box: Vec2 -> Vec2 -> Vec2 -> Float -> Float -> Body
@@ -26,7 +26,7 @@ box (w,h) pos velocity density restitution = {
   velocity = velocity,
   inverseMass = 1/(w*h*density),
   restitution = restitution,
-  shape = Box (BoxShape (w/2,h/2))
+  shape = Box (w/2,h/2)
   }
 
 -- updates bodies with the signal, using a fixed global force
