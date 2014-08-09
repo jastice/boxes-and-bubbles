@@ -1,4 +1,44 @@
 module BoxesAndBubbles where
+{-| The interface for the Boxes and Bubbles physics engine.
+
+# Concepts
+
+## Simulation
+
+Boxes and Bubbles implements a very simple physics simulation. It updates a list of bodies
+at each step. There is no time-normalized integration - if you run it with higher fps, 
+it will run faster.
+
+## Bodies
+
+Everything in Boxes and Bubbles is a Body. A Body is a Box, or a Bubble.
+
+Bodies have some properties:
+  * `position` -- reference point and center of body
+  * `velocity` -- direction and speed of movement
+  * `mass` -- the mass (stored as inverseMass)
+  * `restitution` -- bounciness factor: how much force is preserved on collisions
+  * `shape` -- radius for Bubble, extents for Box
+
+Bodies can have infinite mass. Infinite mass bodies are not affected by any forces.
+
+## Forces
+
+Two types of global forces: gravity and ambient. Both are vectors,
+so that they could point in any direction. Both can vary over time.
+Ambient force takes the mass of objects into account, while gravity does not.
+
+# Functions
+
+## Constructors
+
+@docs bubble, box
+
+## Running the simulation
+
+@docs step, run
+
+-}
 
 import BoxesAndBubblesEngine (..)
 import Math2D (Vec2)
@@ -8,14 +48,17 @@ inf = 1/0
 
 -- constructors
 
--- basic bubble with some defaults
-basicBubble: Float -> Vec2 -> Vec2 -> Body
-basicBubble radius pos velocity = 
-  bubble radius pos velocity 1 1
+{-| Create a bubble. Mass is derived from density and size.
 
--- fully specified bubble
-bubble: Float -> Vec2 -> Vec2 -> Float -> Float -> Body
-bubble radius pos velocity density restitution = { 
+    bubble radius density restitution position velocity
+
+Create a bubble with radius 100 with density 1 and restitution 1
+at origin, moving toward the upper right:
+
+    bubble 100 1 1 (0,0) (3,3)
+-}
+bubble: Float -> Float -> Float -> Vec2 -> Vec2 -> Body
+bubble radius density restitution pos velocity = { 
   pos = pos,
   velocity = velocity, 
   inverseMass = 1/(pi*radius*radius*density), 
@@ -23,8 +66,17 @@ bubble radius pos velocity density restitution = {
   shape = Bubble radius
   }
 
-box: Vec2 -> Vec2 -> Vec2 -> Float -> Float -> Body
-box (w,h) pos velocity density restitution = {
+{-| Create a box. Mass is derived from density and size.
+    
+    box (width,height) position velocity density restitution
+
+Create a box with width 100, height 20, density 1 and restitution 1
+at origin, moving toward the upper right:
+
+    bubble (100,20) 1 1 (0,0) (3,3)
+-}
+box: Vec2 -> Float -> Float -> Vec2 -> Vec2 -> Body
+box (w,h) density restitution pos velocity = {
   pos = pos,
   velocity = velocity,
   inverseMass = 1/(w*h*density),
@@ -32,21 +84,56 @@ box (w,h) pos velocity density restitution = {
   shape = Box (w/2,h/2)
   }
 
--- bounding box made up of multiple boxes with
--- arguments (width,height) center thickness
-bounds: Vec2 -> Vec2 -> Float -> Float -> [Body]
-bounds (w,h) (cx,cy) thickness restitution = 
+{-| Create a bounding box made up of boxes with infinite mass.
+
+    bounds (width,height) thickness restitution center
+
+Create bounds with width and height 800, 50 thick walls and 0.6 restitution at the origin:
+
+    bounds (800,800) 50 0.6 (0,0)
+
+-}
+bounds: Vec2 -> Float -> Float -> Vec2 -> [Body]
+bounds (w,h) thickness restitution (cx,cy) = 
   let (wExt,hExt) = (w/2,h/2)
       halfThick = thickness/2
   in [
-    box (w,thickness) (cx, hExt+halfThick) (0,0) inf restitution,
-    box (w,thickness) (cx, -(hExt+halfThick)) (0,0) inf restitution,
-    box (thickness,h) (wExt+halfThick, cy) (0,0) inf restitution,
-    box (thickness,h) (-(hExt+halfThick), cy) (0,0) inf restitution
+    box (w,thickness) inf restitution (cx, hExt+halfThick) (0,0),
+    box (w,thickness) inf restitution (cx, -(hExt+halfThick)) (0,0),
+    box (thickness,h) inf restitution (wExt+halfThick, cy) (0,0),
+    box (thickness,h) inf restitution (-(hExt+halfThick), cy) (0,0)
   ]
 
--- updates bodies with the signal, using a fixed global force
-run: Vec2 -> [Body] -> Signal a -> Signal [Body]
-run gravity bodies tick = 
-  let force t = (0,0)
-  in foldp (step gravity) bodies (force <~ tick)
+{-| Perform a step in the physics simulation. Applies forces to objects and updates them based
+on their velocity and collisions.
+
+The `gravity` parameter give a global force that ignores object masses, while `force` 
+takes mass into account. Since both types of forces are vectors, they can point in any direction.
+The ambient force can be used to simulate a current, for example.
+
+    step gravity ambient bodies
+
+Apply a downward gravity and sideways ambient force to bodies:
+
+    step (0,-0.2) (20,0) bodies
+-}
+step: Vec2 -> Vec2 -> [Body] -> [Body]      
+step gravity ambient bodies = 
+  map (update gravity ambient) (collide [] bodies)
+
+{-| Convenience function to run the physics engine with a signal and a fixed list of bodies. 
+The forces a signal so that you can vary them over time.
+
+Applies the step function to (gravity,ambient) tuple from the signal and the 
+updated list of bodies.
+
+    run tick bodies
+
+Run with constant gravity and ambient forces that increase over time, updated at 20 fps:
+
+    f t = ((0,-0.1), (t/1000))
+    run bodies (f <~ foldp (+) 0 (fps 20))
+
+-}
+run: [Body] -> Signal (Vec2,Vec2) -> Signal [Body]
+run bodies tick = foldp (uncurry step) bodies tick

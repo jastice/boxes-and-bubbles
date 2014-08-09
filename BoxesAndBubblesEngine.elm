@@ -131,11 +131,6 @@ update gravity force body =
       posNew = plus body.pos body.velocity
   in { body | pos <- posNew, velocity <- velocityNew }
 
--- applies gravity, ambient force, does movement and resolves collisions for all the bubbles
--- gravity: global force, ignores mass unless it's infinite
--- force: global ambient force, uses mass
-step: Vec2 -> Vec2 -> [Body] -> [Body]      
-step gravity force bodies = 
-  map (update gravity force) (collide [] bodies)
+
 
 
