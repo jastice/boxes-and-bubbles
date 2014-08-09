@@ -1,1 +1,923 @@
-<h1>Does it work?</h1>
+<!DOCTYPE HTML>
+<html><head><meta charset="UTF-8"><title>Example</title><script type="text/javascript" src="elm-runtime.js"></script><script type="text/javascript">Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _A = _N.Array.make(_elm),
+   _E = _N.Error.make(_elm),
+   $moduleName = "Main";
+   var Basics = Elm.Basics.make(_elm);
+   var BoxesAndBubbles = Elm.BoxesAndBubbles.make(_elm);
+   var BoxesAndBubblesEngine = Elm.BoxesAndBubblesEngine.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Math2D = Elm.Math2D.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Mouse = Elm.Mouse.make(_elm);
+   var Native = Native || {};
+   Native.Json = Elm.Native.Json.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var _op = {};
+   var sinforce = function (t) {
+      return {ctor: "_Tuple2"
+             ,_0: Basics.sin(Basics.radians(t / 1000)) * 50
+             ,_1: 0};
+   };
+   var constforce = function (t) {
+      return {ctor: "_Tuple2"
+             ,_0: {ctor: "_Tuple2"
+                  ,_0: 0
+                  ,_1: -0.2}
+             ,_1: {ctor: "_Tuple2"
+                  ,_0: 0
+                  ,_1: 0}};
+   };
+   var tick0 = A2(Signal._op["<~"],
+   constforce,
+   A3(Signal.foldp,
+   F2(function (x,y) {
+      return x + y;
+   }),
+   0,
+   Time.fps(20)));
+   var bodyInfo = F2(function (restitution,
+   inverseMass) {
+      return Graphics.Collage.toForm(Text.centered(Text.toText(List.concat(_L.fromArray(["e = "
+                                                                                        ,String.show(restitution)
+                                                                                        ,"\nm = "
+                                                                                        ,String.show(Basics.round(1 / inverseMass))])))));
+   });
+   var drawBody = function (_v0) {
+      return function () {
+         return function () {
+            var info = A2(bodyInfo,
+            _v0.restitution,
+            _v0.inverseMass);
+            var veloLine = Graphics.Collage.traced(Graphics.Collage.solid(Color.red))(A2(Graphics.Collage.segment,
+            {ctor: "_Tuple2",_0: 0,_1: 0},
+            A2(Math2D.mul2,
+            _v0.velocity,
+            5)));
+            var ready = function () {
+               var _v2 = _v0.shape;
+               switch (_v2.ctor)
+               {case "Box":
+                  return function () {
+                       var $ = _v2._0,
+                       w = $._0,
+                       h = $._1;
+                       return Graphics.Collage.group(_L.fromArray([Graphics.Collage.outlined(Graphics.Collage.solid(Color.black))(A2(Graphics.Collage.rect,
+                                                                  w * 2,
+                                                                  h * 2))
+                                                                  ,veloLine
+                                                                  ,Graphics.Collage.move({ctor: "_Tuple2"
+                                                                                         ,_0: 0
+                                                                                         ,_1: h + 16})(info)]));
+                    }();
+                  case "Bubble":
+                  return Graphics.Collage.group(_L.fromArray([Graphics.Collage.outlined(Graphics.Collage.solid(Color.black))(Graphics.Collage.circle(_v2._0))
+                                                             ,veloLine
+                                                             ,Graphics.Collage.move({ctor: "_Tuple2"
+                                                                                    ,_0: 0
+                                                                                    ,_1: _v2._0 + 16})(info)]));}
+               _E.Case($moduleName,
+               "between lines 32 and 44");
+            }();
+            return A2(Graphics.Collage.move,
+            _v0.pos,
+            ready);
+         }();
+      }();
+   };
+   var scene = function (bodies) {
+      return function () {
+         var drawnBodies = A2(List.map,
+         drawBody,
+         bodies);
+         return A3(Graphics.Collage.collage,
+         800,
+         800,
+         drawnBodies);
+      }();
+   };
+   var e0 = 0.8;
+   var inf = 1 / 0;
+   var someBodies = _L.append(_L.fromArray([A5(BoxesAndBubbles.bubble,
+                                           30,
+                                           1,
+                                           e0,
+                                           {ctor: "_Tuple2",_0: -80,_1: 0},
+                                           {ctor: "_Tuple2",_0: 1.5,_1: 0})
+                                           ,A5(BoxesAndBubbles.bubble,
+                                           70,
+                                           inf,
+                                           0,
+                                           {ctor: "_Tuple2",_0: 80,_1: 0},
+                                           {ctor: "_Tuple2",_0: 0,_1: 0})
+                                           ,A5(BoxesAndBubbles.bubble,
+                                           40,
+                                           1,
+                                           e0,
+                                           {ctor: "_Tuple2",_0: 0,_1: 200},
+                                           {ctor: "_Tuple2"
+                                           ,_0: 0.4
+                                           ,_1: -3.0})
+                                           ,A5(BoxesAndBubbles.bubble,
+                                           80,
+                                           0.1,
+                                           e0,
+                                           {ctor: "_Tuple2"
+                                           ,_0: 300
+                                           ,_1: -280},
+                                           {ctor: "_Tuple2",_0: -2,_1: 1})
+                                           ,A5(BoxesAndBubbles.bubble,
+                                           15,
+                                           5,
+                                           0.4,
+                                           {ctor: "_Tuple2"
+                                           ,_0: 300
+                                           ,_1: 300},
+                                           {ctor: "_Tuple2",_0: -4,_1: -3})
+                                           ,A5(BoxesAndBubbles.bubble,
+                                           40,
+                                           1,
+                                           e0,
+                                           {ctor: "_Tuple2"
+                                           ,_0: 200
+                                           ,_1: 200},
+                                           {ctor: "_Tuple2",_0: -5,_1: -1})
+                                           ,A5(BoxesAndBubbles.box,
+                                           {ctor: "_Tuple2"
+                                           ,_0: 100
+                                           ,_1: 100},
+                                           1,
+                                           e0,
+                                           {ctor: "_Tuple2",_0: 300,_1: 0},
+                                           {ctor: "_Tuple2",_0: 0,_1: 0})
+                                           ,A5(BoxesAndBubbles.box,
+                                           {ctor: "_Tuple2",_0: 20,_1: 20},
+                                           1,
+                                           e0,
+                                           {ctor: "_Tuple2"
+                                           ,_0: -200
+                                           ,_1: 0},
+                                           {ctor: "_Tuple2",_0: 3,_1: 0})
+                                           ,A5(BoxesAndBubbles.box,
+                                           {ctor: "_Tuple2",_0: 20,_1: 40},
+                                           1,
+                                           e0,
+                                           {ctor: "_Tuple2"
+                                           ,_0: 200
+                                           ,_1: -200},
+                                           {ctor: "_Tuple2"
+                                           ,_0: -1
+                                           ,_1: -1})]),
+   A4(BoxesAndBubbles.bounds,
+   {ctor: "_Tuple2"
+   ,_0: 750
+   ,_1: 750},
+   100,
+   e0,
+   {ctor: "_Tuple2",_0: 0,_1: 0}));
+   var main = A2(Signal._op["<~"],
+   scene,
+   A2(BoxesAndBubbles.run,
+   someBodies,
+   tick0));
+   _elm.Main.values = {_op: _op
+                      ,inf: inf
+                      ,e0: e0
+                      ,someBodies: someBodies
+                      ,bodyInfo: bodyInfo
+                      ,drawBody: drawBody
+                      ,scene: scene
+                      ,constforce: constforce
+                      ,sinforce: sinforce
+                      ,tick0: tick0
+                      ,main: main};
+   return _elm.Main.values;
+};Elm.BoxesAndBubbles = Elm.BoxesAndBubbles || {};
+Elm.BoxesAndBubbles.make = function (_elm) {
+   "use strict";
+   _elm.BoxesAndBubbles = _elm.BoxesAndBubbles || {};
+   if (_elm.BoxesAndBubbles.values)
+   return _elm.BoxesAndBubbles.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _A = _N.Array.make(_elm),
+   _E = _N.Error.make(_elm),
+   $moduleName = "BoxesAndBubbles";
+   var Basics = Elm.Basics.make(_elm);
+   var BoxesAndBubblesEngine = Elm.BoxesAndBubblesEngine.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Math2D = Elm.Math2D.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Native = Native || {};
+   Native.Json = Elm.Native.Json.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var _op = {};
+   var step = F3(function (gravity,
+   ambient,
+   bodies) {
+      return A2(List.map,
+      A2(BoxesAndBubblesEngine.update,
+      gravity,
+      ambient),
+      A2(BoxesAndBubblesEngine.collide,
+      _L.fromArray([]),
+      bodies));
+   });
+   var run = F2(function (bodies,
+   tick) {
+      return A3(Signal.foldp,
+      Basics.uncurry(step),
+      bodies,
+      tick);
+   });
+   var box = F5(function (_v0,
+   density,
+   restitution,
+   pos,
+   velocity) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2": return {_: {}
+                                 ,inverseMass: 1 / (_v0._0 * _v0._1 * density)
+                                 ,pos: pos
+                                 ,restitution: restitution
+                                 ,shape: BoxesAndBubblesEngine.Box({ctor: "_Tuple2"
+                                                                   ,_0: _v0._0 / 2
+                                                                   ,_1: _v0._1 / 2})
+                                 ,velocity: velocity};}
+         _E.Case($moduleName,
+         "between lines 80 and 84");
+      }();
+   });
+   var bubble = F5(function (radius,
+   density,
+   restitution,
+   pos,
+   velocity) {
+      return {_: {}
+             ,inverseMass: 1 / (Basics.pi * radius * radius * density)
+             ,pos: pos
+             ,restitution: restitution
+             ,shape: BoxesAndBubblesEngine.Bubble(radius)
+             ,velocity: velocity};
+   });
+   var inf = 1 / 0;
+   var bounds = F4(function (_v4,
+   thickness,
+   restitution,
+   _v5) {
+      return function () {
+         switch (_v5.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v4.ctor)
+                 {case "_Tuple2":
+                    return function () {
+                         var halfThick = thickness / 2;
+                         var $ = {ctor: "_Tuple2"
+                                 ,_0: _v4._0 / 2
+                                 ,_1: _v4._1 / 2},
+                         wExt = $._0,
+                         hExt = $._1;
+                         return _L.fromArray([A5(box,
+                                             {ctor: "_Tuple2"
+                                             ,_0: _v4._0
+                                             ,_1: thickness},
+                                             inf,
+                                             restitution,
+                                             {ctor: "_Tuple2"
+                                             ,_0: _v5._0
+                                             ,_1: hExt + halfThick},
+                                             {ctor: "_Tuple2",_0: 0,_1: 0})
+                                             ,A5(box,
+                                             {ctor: "_Tuple2"
+                                             ,_0: _v4._0
+                                             ,_1: thickness},
+                                             inf,
+                                             restitution,
+                                             {ctor: "_Tuple2"
+                                             ,_0: _v5._0
+                                             ,_1: 0 - (hExt + halfThick)},
+                                             {ctor: "_Tuple2",_0: 0,_1: 0})
+                                             ,A5(box,
+                                             {ctor: "_Tuple2"
+                                             ,_0: thickness
+                                             ,_1: _v4._1},
+                                             inf,
+                                             restitution,
+                                             {ctor: "_Tuple2"
+                                             ,_0: wExt + halfThick
+                                             ,_1: _v5._1},
+                                             {ctor: "_Tuple2",_0: 0,_1: 0})
+                                             ,A5(box,
+                                             {ctor: "_Tuple2"
+                                             ,_0: thickness
+                                             ,_1: _v4._1},
+                                             inf,
+                                             restitution,
+                                             {ctor: "_Tuple2"
+                                             ,_0: 0 - (hExt + halfThick)
+                                             ,_1: _v5._1},
+                                             {ctor: "_Tuple2"
+                                             ,_0: 0
+                                             ,_1: 0})]);
+                      }();}
+                 _E.Case($moduleName,
+                 "between lines 98 and 105");
+              }();}
+         _E.Case($moduleName,
+         "between lines 98 and 105");
+      }();
+   });
+   _elm.BoxesAndBubbles.values = {_op: _op
+                                 ,inf: inf
+                                 ,bubble: bubble
+                                 ,box: box
+                                 ,bounds: bounds
+                                 ,step: step
+                                 ,run: run};
+   return _elm.BoxesAndBubbles.values;
+};Elm.BoxesAndBubblesEngine = Elm.BoxesAndBubblesEngine || {};
+Elm.BoxesAndBubblesEngine.make = function (_elm) {
+   "use strict";
+   _elm.BoxesAndBubblesEngine = _elm.BoxesAndBubblesEngine || {};
+   if (_elm.BoxesAndBubblesEngine.values)
+   return _elm.BoxesAndBubblesEngine.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _A = _N.Array.make(_elm),
+   _E = _N.Error.make(_elm),
+   $moduleName = "BoxesAndBubblesEngine";
+   var Basics = Elm.Basics.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Math2D = Elm.Math2D.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Native = Native || {};
+   Native.Json = Elm.Native.Json.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var _op = {};
+   var update = F3(function (gravity,
+   force,
+   body) {
+      return function () {
+         var posNew = A2(Math2D.plus,
+         body.pos,
+         body.velocity);
+         var acceleration = A2(Math2D.mul2,
+         force,
+         body.inverseMass);
+         var accelGravity = _U.eq(body.inverseMass,
+         0) ? {ctor: "_Tuple2"
+              ,_0: 0
+              ,_1: 0} : gravity;
+         var velocityNew = Math2D.plus(accelGravity)(A2(Math2D.plus,
+         body.velocity,
+         acceleration));
+         return _U.replace([["pos"
+                            ,posNew]
+                           ,["velocity",velocityNew]],
+         body);
+      }();
+   });
+   var resolveCollision = F3(function (_v0,
+   b0,
+   b1) {
+      return function () {
+         return function () {
+            var relativeVelocity = A2(Math2D.minus,
+            b1.velocity,
+            b0.velocity);
+            var velocityAlongNormal = A2(Math2D.dot,
+            relativeVelocity,
+            _v0.normal);
+            return _U.eq(_v0.penetration,
+            0) || _U.cmp(velocityAlongNormal,
+            0) > 0 ? {ctor: "_Tuple2"
+                     ,_0: b0
+                     ,_1: b1} : function () {
+               var invMassSum = b0.inverseMass + b1.inverseMass;
+               var restitution = A2(Basics.min,
+               b0.restitution,
+               b1.restitution);
+               var j = (0 - (1 + restitution)) * velocityAlongNormal / invMassSum;
+               var impulse = A2(Math2D.mul2,
+               _v0.normal,
+               j);
+               return {ctor: "_Tuple2"
+                      ,_0: _U.replace([["velocity"
+                                       ,A2(Math2D.minus,
+                                       b0.velocity,
+                                       A2(Math2D.mul2,
+                                       impulse,
+                                       b0.inverseMass))]],
+                      b0)
+                      ,_1: _U.replace([["velocity"
+                                       ,A2(Math2D.plus,
+                                       b1.velocity,
+                                       A2(Math2D.mul2,
+                                       impulse,
+                                       b1.inverseMass))]],
+                      b1)};
+            }();
+         }();
+      }();
+   });
+   var CollisionResult = F2(function (a,
+   b) {
+      return {_: {}
+             ,normal: a
+             ,penetration: b};
+   });
+   var collisionBubbleBubble = F3(function (b0b1,
+   radius0,
+   radius1) {
+      return function () {
+         var distanceSq = Math2D.lenSq(b0b1);
+         var radiusb0b1 = radius0 + radius1;
+         return _U.eq(distanceSq,
+         0) ? A2(CollisionResult,
+         {ctor: "_Tuple2",_0: 1,_1: 0},
+         radius0) : _U.cmp(distanceSq,
+         radiusb0b1 * radiusb0b1) > -1 ? A2(CollisionResult,
+         {ctor: "_Tuple2",_0: 1,_1: 0},
+         0) : function () {
+            var d = Basics.sqrt(distanceSq);
+            return A2(CollisionResult,
+            A2(Math2D.div2,b0b1,d),
+            radiusb0b1 - d);
+         }();
+      }();
+   });
+   var collisionBoxBox = F2(function (_v2,
+   _v3) {
+      return function () {
+         switch (_v3.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v2.ctor)
+                 {case "_Tuple2":
+                    return function () {
+                         var dist = A2(Math2D.minus,
+                         _v3._0,
+                         _v2._0);
+                         var $ = dist,
+                         nx = $._0,
+                         ny = $._1;
+                         var $ = A2(Math2D.minus,
+                         A2(Math2D.plus,_v2._1,_v3._1),
+                         Math2D.abs2(dist)),
+                         ox = $._0,
+                         oy = $._1;
+                         return _U.cmp(ox,
+                         0) > 0 && _U.cmp(oy,
+                         0) > 0 ? _U.cmp(ox,
+                         oy) < 0 ? _U.cmp(nx,
+                         0) < 0 ? A2(CollisionResult,
+                         {ctor: "_Tuple2",_0: -1,_1: 0},
+                         ox) : A2(CollisionResult,
+                         {ctor: "_Tuple2",_0: 1,_1: 0},
+                         ox) : _U.cmp(ny,
+                         0) < 0 ? A2(CollisionResult,
+                         {ctor: "_Tuple2",_0: 0,_1: -1},
+                         oy) : A2(CollisionResult,
+                         {ctor: "_Tuple2",_0: 0,_1: 1},
+                         oy) : A2(CollisionResult,
+                         {ctor: "_Tuple2",_0: 1,_1: 0},
+                         0);
+                      }();}
+                 _E.Case($moduleName,
+                 "between lines 41 and 50");
+              }();}
+         _E.Case($moduleName,
+         "between lines 41 and 50");
+      }();
+   });
+   var collisionBoxBubble = F2(function (_v10,
+   _v11) {
+      return function () {
+         switch (_v11.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v10.ctor)
+                 {case "_Tuple2":
+                    return function () {
+                         var $ = _v10._1,
+                         boxX = $._0,
+                         boxY = $._1;
+                         var dist = A2(Math2D.minus,
+                         _v11._0,
+                         _v10._0);
+                         var $ = dist,
+                         dx = $._0,
+                         dy = $._1;
+                         var c = {ctor: "_Tuple2"
+                                 ,_0: A3(Basics.clamp,
+                                 0 - boxX,
+                                 boxX,
+                                 dx)
+                                 ,_1: A3(Basics.clamp,
+                                 0 - boxY,
+                                 boxY,
+                                 dy)};
+                         var $ = c,cx = $._0,cy = $._1;
+                         var $ = !_U.eq(dist,
+                         c) ? {ctor: "_Tuple2"
+                              ,_0: c
+                              ,_1: false} : _U.cmp(Basics.abs(dx),
+                         Basics.abs(dy)) > 0 ? _U.cmp(cx,
+                         0) > 0 ? {ctor: "_Tuple2"
+                                  ,_0: {ctor: "_Tuple2"
+                                       ,_0: boxX
+                                       ,_1: cy}
+                                  ,_1: true} : {ctor: "_Tuple2"
+                                               ,_0: {ctor: "_Tuple2"
+                                                    ,_0: 0 - boxX
+                                                    ,_1: cy}
+                                               ,_1: true} : _U.cmp(cy,
+                         0) > 0 ? {ctor: "_Tuple2"
+                                  ,_0: {ctor: "_Tuple2"
+                                       ,_0: cx
+                                       ,_1: boxY}
+                                  ,_1: true} : {ctor: "_Tuple2"
+                                               ,_0: {ctor: "_Tuple2"
+                                                    ,_0: cx
+                                                    ,_1: 0 - boxY}
+                                               ,_1: true},
+                         closest = $._0,
+                         inside = $._1;
+                         var normal = A2(Math2D.minus,
+                         dist,
+                         closest);
+                         var normalLenSq = Math2D.lenSq(normal);
+                         return _U.cmp(normalLenSq,
+                         _v11._1 * _v11._1) > 0 && Basics.not(inside) ? A2(CollisionResult,
+                         {ctor: "_Tuple2",_0: 1,_1: 0},
+                         0) : function () {
+                            var penetration = _v11._1 + Basics.sqrt(normalLenSq);
+                            return inside ? A2(CollisionResult,
+                            A2(Math2D.mul2,
+                            Math2D.norm(normal),
+                            -1),
+                            penetration) : A2(CollisionResult,
+                            Math2D.norm(normal),
+                            penetration);
+                         }();
+                      }();}
+                 _E.Case($moduleName,
+                 "between lines 54 and 71");
+              }();}
+         _E.Case($moduleName,
+         "between lines 54 and 71");
+      }();
+   });
+   var Bubble = function (a) {
+      return {ctor: "Bubble"
+             ,_0: a};
+   };
+   var Box = function (a) {
+      return {ctor: "Box",_0: a};
+   };
+   var collision = F2(function (body0,
+   body1) {
+      return function () {
+         var _v18 = {ctor: "_Tuple2"
+                    ,_0: body0.shape
+                    ,_1: body1.shape};
+         switch (_v18.ctor)
+         {case "_Tuple2":
+            switch (_v18._0.ctor)
+              {case "Box":
+                 switch (_v18._1.ctor)
+                   {case "Box":
+                      return A2(collisionBoxBox,
+                        {ctor: "_Tuple2"
+                        ,_0: body0.pos
+                        ,_1: _v18._0._0},
+                        {ctor: "_Tuple2"
+                        ,_0: body1.pos
+                        ,_1: _v18._1._0});
+                      case "Bubble":
+                      return A2(collisionBoxBubble,
+                        {ctor: "_Tuple2"
+                        ,_0: body0.pos
+                        ,_1: _v18._0._0},
+                        {ctor: "_Tuple2"
+                        ,_0: body1.pos
+                        ,_1: _v18._1._0});}
+                   break;
+                 case "Bubble":
+                 switch (_v18._1.ctor)
+                   {case "Box":
+                      return function () {
+                           var res = A2(collisionBoxBubble,
+                           {ctor: "_Tuple2"
+                           ,_0: body1.pos
+                           ,_1: _v18._1._0},
+                           {ctor: "_Tuple2"
+                           ,_0: body0.pos
+                           ,_1: _v18._0._0});
+                           return _U.replace([["normal"
+                                              ,Math2D.neg(res.normal)]],
+                           res);
+                        }();
+                      case "Bubble":
+                      return function () {
+                           var b0b1 = A2(Math2D.minus,
+                           body1.pos,
+                           body0.pos);
+                           return A3(collisionBubbleBubble,
+                           b0b1,
+                           _v18._0._0,
+                           _v18._1._0);
+                        }();}
+                   break;}
+              break;}
+         _E.Case($moduleName,
+         "between lines 76 and 86");
+      }();
+   });
+   var collideWith = F3(function (a0,
+   bodies,
+   acc) {
+      return function () {
+         switch (bodies.ctor)
+         {case "::": return function () {
+                 var collisionResult = A2(collision,
+                 a0,
+                 bodies._0);
+                 var $ = A3(resolveCollision,
+                 collisionResult,
+                 a0,
+                 bodies._0),
+                 a1 = $._0,
+                 b1 = $._1;
+                 return A3(collideWith,
+                 a1,
+                 bodies._1,
+                 {ctor: "::",_0: b1,_1: acc});
+              }();
+            case "[]": return {ctor: "::"
+                              ,_0: a0
+                              ,_1: acc};}
+         _E.Case($moduleName,
+         "between lines 109 and 114");
+      }();
+   });
+   var collide = F2(function (acc,
+   bodies) {
+      return function () {
+         switch (bodies.ctor)
+         {case "::": return function () {
+                 var _raw = A3(collideWith,
+                 bodies._0,
+                 bodies._1,
+                 _L.fromArray([])),
+                 $ = _raw.ctor === "::" ? _raw : _E.Case($moduleName,
+                 "on line 122, column 24 to 42"),
+                 h1 = $._0,
+                 t1 = $._1;
+                 return A2(collide,
+                 {ctor: "::",_0: h1,_1: acc},
+                 t1);
+              }();
+            case "[]": return acc;}
+         _E.Case($moduleName,
+         "between lines 119 and 123");
+      }();
+   });
+   var Body = F5(function (a,
+   b,
+   c,
+   d,
+   e) {
+      return {_: {}
+             ,inverseMass: c
+             ,pos: a
+             ,restitution: d
+             ,shape: e
+             ,velocity: b};
+   });
+   _elm.BoxesAndBubblesEngine.values = {_op: _op
+                                       ,collisionBubbleBubble: collisionBubbleBubble
+                                       ,collisionBoxBox: collisionBoxBox
+                                       ,collisionBoxBubble: collisionBoxBubble
+                                       ,collision: collision
+                                       ,resolveCollision: resolveCollision
+                                       ,collideWith: collideWith
+                                       ,collide: collide
+                                       ,update: update
+                                       ,Box: Box
+                                       ,Bubble: Bubble
+                                       ,Body: Body
+                                       ,CollisionResult: CollisionResult};
+   return _elm.BoxesAndBubblesEngine.values;
+};Elm.Math2D = Elm.Math2D || {};
+Elm.Math2D.make = function (_elm) {
+   "use strict";
+   _elm.Math2D = _elm.Math2D || {};
+   if (_elm.Math2D.values)
+   return _elm.Math2D.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _A = _N.Array.make(_elm),
+   _E = _N.Error.make(_elm),
+   $moduleName = "Math2D";
+   var Basics = Elm.Basics.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Native = Native || {};
+   Native.Json = Elm.Native.Json.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var _op = {};
+   var lenSq = function (_v0) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return _v0._0 * _v0._0 + _v0._1 * _v0._1;}
+         _E.Case($moduleName,
+         "on line 36, column 15 to 24");
+      }();
+   };
+   var neg = function (_v4) {
+      return function () {
+         switch (_v4.ctor)
+         {case "_Tuple2":
+            return {ctor: "_Tuple2"
+                   ,_0: 0 - _v4._0
+                   ,_1: 0 - _v4._1};}
+         _E.Case($moduleName,
+         "on line 32, column 14 to 19");
+      }();
+   };
+   var abs2 = function (_v8) {
+      return function () {
+         switch (_v8.ctor)
+         {case "_Tuple2":
+            return {ctor: "_Tuple2"
+                   ,_0: Basics.abs(_v8._0)
+                   ,_1: Basics.abs(_v8._1)};}
+         _E.Case($moduleName,
+         "on line 29, column 15 to 27");
+      }();
+   };
+   var mul2 = F2(function (_v12,
+   a) {
+      return function () {
+         switch (_v12.ctor)
+         {case "_Tuple2":
+            return {ctor: "_Tuple2"
+                   ,_0: _v12._0 * a
+                   ,_1: _v12._1 * a};}
+         _E.Case($moduleName,
+         "on line 25, column 17 to 25");
+      }();
+   });
+   var div2 = F2(function (_v16,
+   a) {
+      return function () {
+         switch (_v16.ctor)
+         {case "_Tuple2":
+            return {ctor: "_Tuple2"
+                   ,_0: _v16._0 / a
+                   ,_1: _v16._1 / a};}
+         _E.Case($moduleName,
+         "on line 22, column 17 to 25");
+      }();
+   });
+   var norm = function (v) {
+      return div2(v)(Basics.sqrt(lenSq(v)));
+   };
+   var dot = F2(function (_v20,
+   _v21) {
+      return function () {
+         switch (_v21.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v20.ctor)
+                 {case "_Tuple2":
+                    return _v20._0 * _v21._0 + _v20._1 * _v21._1;}
+                 _E.Case($moduleName,
+                 "on line 18, column 23 to 36");
+              }();}
+         _E.Case($moduleName,
+         "on line 18, column 23 to 36");
+      }();
+   });
+   var mul = F2(function (_v28,
+   _v29) {
+      return function () {
+         switch (_v29.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v28.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple2"
+                           ,_0: _v28._0 * _v29._0
+                           ,_1: _v28._1 * _v29._1};}
+                 _E.Case($moduleName,
+                 "on line 15, column 24 to 36");
+              }();}
+         _E.Case($moduleName,
+         "on line 15, column 24 to 36");
+      }();
+   });
+   var minus = F2(function (_v36,
+   _v37) {
+      return function () {
+         switch (_v37.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v36.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple2"
+                           ,_0: _v36._0 - _v37._0
+                           ,_1: _v36._1 - _v37._1};}
+                 _E.Case($moduleName,
+                 "on line 11, column 26 to 37");
+              }();}
+         _E.Case($moduleName,
+         "on line 11, column 26 to 37");
+      }();
+   });
+   var plus = F2(function (_v44,
+   _v45) {
+      return function () {
+         switch (_v45.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v44.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple2"
+                           ,_0: _v44._0 + _v45._0
+                           ,_1: _v44._1 + _v45._1};}
+                 _E.Case($moduleName,
+                 "on line 8, column 25 to 36");
+              }();}
+         _E.Case($moduleName,
+         "on line 8, column 25 to 36");
+      }();
+   });
+   _elm.Math2D.values = {_op: _op
+                        ,plus: plus
+                        ,minus: minus
+                        ,mul: mul
+                        ,dot: dot
+                        ,div2: div2
+                        ,mul2: mul2
+                        ,abs2: abs2
+                        ,neg: neg
+                        ,lenSq: lenSq
+                        ,norm: norm};
+   return _elm.Math2D.values;
+};</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script><noscript></noscript></body></html>
