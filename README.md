@@ -12,7 +12,7 @@ It does this:
 It doesn't do:
 
 * arbitrary polygons
-* friction
+* friction / drag
 * rotation
 * time-integrated movement
 * graphics
