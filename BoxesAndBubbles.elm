@@ -43,9 +43,6 @@ Ambient force takes the mass of objects into account, while gravity does not.
 import BoxesAndBubblesEngine (..)
 import Math2D (Vec2)
 
-
-inf = 1/0
-
 -- constructors
 
 {-| Create a bubble. Mass is derived from density and size.
@@ -97,6 +94,7 @@ bounds: Vec2 -> Float -> Float -> Vec2 -> [Body]
 bounds (w,h) thickness restitution (cx,cy) = 
   let (wExt,hExt) = (w/2,h/2)
       halfThick = thickness/2
+      inf = 1/0
   in [
     box (w,thickness) inf restitution (cx, hExt+halfThick) (0,0),
     box (w,thickness) inf restitution (cx, -(hExt+halfThick)) (0,0),
