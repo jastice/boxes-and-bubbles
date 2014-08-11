@@ -19,11 +19,11 @@ Everything in Boxes and Bubbles is a Body. A Body is a Box, or a Bubble.
 
 Bodies have some properties:
 
-  * `position` -- reference point and center of body
-  * `velocity` -- direction and speed of movement
-  * `mass` -- the mass (stored as inverseMass)
-  * `restitution` -- bounciness factor: how much force is preserved on collisions
-  * `shape` -- radius for Bubble, extents for Box, wrapped in an ADT.
+* `position` -- reference point and center of body
+* `velocity` -- direction and speed of movement
+* `mass` -- the mass (stored as inverseMass)
+* `restitution` -- bounciness factor: how much force is preserved on collisions
+* `shape` -- radius for Bubble, extents for Box, wrapped in an ADT.
 
 Bodies can have infinite mass. Infinite mass bodies are not affected by any forces.
 
