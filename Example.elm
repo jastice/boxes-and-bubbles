@@ -1,5 +1,4 @@
-import Mouse
-import BoxesAndBubblesEngine (..)
+import BoxesAndBubblesBodies (..)
 import BoxesAndBubbles (..)
 import Math2D (mul2)
 
@@ -47,8 +46,10 @@ scene bodies =
   let drawnBodies = map drawBody bodies 
   in collage 800 800 drawnBodies
 
-constforce t = ((0,-0.2),(0,0))
-sinforce t = ((sin <| radians (t/1000)) * 50, 0)
-tick0 = constforce <~ foldp (+) 0 (fps 20)
+constgravity t = ((0,-0.2), (0,0)) -- constant downward gravity
+sinforce t = ((sin <| radians (t/1000)) * 50, 0) -- sinuoidal sideways force
+counterforces t = ((0,-0.01), (0, t/1000)) -- slowly accellerating upward drift
 
-main = scene <~ run someBodies tick0
+tick = counterforces <~ foldp (+) 0 (fps 20)
+
+main = scene <~ run someBodies tick

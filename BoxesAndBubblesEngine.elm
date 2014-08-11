@@ -2,18 +2,7 @@ module BoxesAndBubblesEngine where
 -- based roughly on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
 import Math2D (..)
-
-type Body = {
-  pos: Vec2, -- reference position (center)
-  velocity: Vec2, -- direction and speed
-  inverseMass: Float, -- we usually use only inverse mass for calculations
-  restitution: Float, -- bounciness factor
-  shape: Shape
-}
-
-data Shape = 
-    Box Vec2 -- vector of extents (half-widths)
-  | Bubble Float -- radius
+import BoxesAndBubblesBodies (..)
 
 -- collision calculation for different types of bodies
 

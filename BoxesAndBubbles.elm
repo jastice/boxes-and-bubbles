@@ -41,6 +41,7 @@ Ambient force takes the mass of objects into account, while gravity does not.
 -}
 
 import BoxesAndBubblesEngine (..)
+import BoxesAndBubblesBodies (..)
 import Math2D (Vec2)
 
 -- constructors
@@ -103,7 +104,7 @@ bounds (w,h) thickness restitution (cx,cy) =
   ]
 
 {-| Perform a step in the physics simulation. Applies forces to objects and updates them based
-on their velocity and collisions.
+on their velocity and collisions. Order of bodies in input list is not preserved in the output.
 
 The `gravity` parameter give a global force that ignores object masses, while `force` 
 takes mass into account. Since both types of forces are vectors, they can point in any direction.
@@ -120,7 +121,8 @@ step gravity ambient bodies =
   map (update gravity ambient) (collide [] bodies)
 
 {-| Convenience function to run the physics engine with a signal and a fixed list of bodies. 
-The forces a signal so that you can vary them over time.
+The forces a signal so that you can vary them over time. 
+Order of bodies in initial list is not preserved in the output signal.
 
 Applies the step function to (gravity,ambient) tuple from the signal and the 
 updated list of bodies.
