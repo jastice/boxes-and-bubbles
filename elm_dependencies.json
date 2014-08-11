@@ -6,5 +6,5 @@
     "exposed-modules": ["BoxesAndBubbles", "BoxesAndBubblesBodies"],
     "elm-version": "0.12.3",
     "dependencies": {},
-    "repository": "https://github.com/jastice/boxes-and-bubbles"
+    "repository": "https://github.com/jastice/boxes-and-bubbles.git"
 }
