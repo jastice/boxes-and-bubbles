@@ -4,7 +4,7 @@ Defines bodies as used by the Boxes and Bubbles engine. You will need these data
 display and modify bodies being calculated. For creating them, you may prefer the constructor 
 functions in the BoxesAndBubbles module.
 
-@doc Body, Shape
+@docs Body, Shape
 
 -}
 

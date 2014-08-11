@@ -9,6 +9,9 @@ Boxes and Bubbles implements a very simple physics simulation. It updates a list
 at each step. There is no time-normalized integration - if you run it with higher fps, 
 it will run faster.
 
+See the [example](https://github.com/jastice/boxes-and-bubbles/blob/master/Example.elm) for a
+working usage example.
+
 ## Bodies
 
 Everything in Boxes and Bubbles is a Body. A Body is a Box, or a Bubble.
@@ -18,7 +21,7 @@ Bodies have some properties:
   * `velocity` -- direction and speed of movement
   * `mass` -- the mass (stored as inverseMass)
   * `restitution` -- bounciness factor: how much force is preserved on collisions
-  * `shape` -- radius for Bubble, extents for Box
+  * `shape` -- radius for Bubble, extents for Box, wrapped in an ADT.
 
 Bodies can have infinite mass. Infinite mass bodies are not affected by any forces.
 
