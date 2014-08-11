@@ -9,14 +9,16 @@ Boxes and Bubbles implements a very simple physics simulation. It updates a list
 at each step. There is no time-normalized integration - if you run it with higher fps, 
 it will run faster.
 
-See the [example](https://github.com/jastice/boxes-and-bubbles/blob/master/Example.elm) for a
-working usage example.
+See the [example code](https://github.com/jastice/boxes-and-bubbles/blob/master/Example.elm) 
+and the [example animation](http://jastice.github.io/boxes-and-bubbles/) that it produces
+for a working usage example.
 
 ## Bodies
 
 Everything in Boxes and Bubbles is a Body. A Body is a Box, or a Bubble.
 
 Bodies have some properties:
+
   * `position` -- reference point and center of body
   * `velocity` -- direction and speed of movement
   * `mass` -- the mass (stored as inverseMass)
