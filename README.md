@@ -4,6 +4,8 @@ Boxes and Bubbles
 A simple-as-possible 2D physics rigid-body physics engine for Elm.
 Supports only bubbles (circles) and boxes (axis-aligned rectangles).
 
+Here's [an example](http://jastice.github.io/boxes-and-bubbles/) of the engine in action.
+
 It does this:
 
 * resolve collisions between bodies of different mass and bounciness.
