@@ -20,36 +20,43 @@ someBodies = [
   box (20,40) 1 e0 (200,-200) (-1,-1)
   ] ++ bounds (750,750) 100 e0 (0,0)
 
+-- extending bodies with an arbitrary string label
+type Labeled = { label: String }
 
-bodyInfo restitution inverseMass = 
-  ["e = ", show restitution, "\nm = ", show (round (1/inverseMass))] 
-  |> concat |> toText |> centered |> toForm 
+-- we'll just compute the label from the data in the body
+bodyLabel restitution inverseMass = 
+  ["e = ", show restitution, "\nm = ", show (round (1/inverseMass))] |> concat
 
-drawBody {pos,velocity,inverseMass,restitution,shape} = 
+-- and attach it to all the bodies
+labeledBodies = map (\b -> { b | label = bodyLabel b.restitution b.inverseMass }) someBodies
+
+-- why yes, it draws a body with label. Or creates the Element rather
+drawBody {pos,velocity,inverseMass,restitution,shape,label} = 
   let veloLine = segment (0,0) (mul2 velocity 5) |> traced (solid red)
-      info = bodyInfo restitution inverseMass
+      info = label |> toText |> centered |> toForm 
+
       ready = case shape of
         Bubble radius ->
-          group [
+          group [ 
             circle radius |> outlined (solid black),
-            veloLine, info |> move (0,radius+16)
+            info |> move (0,radius+16),
+            veloLine
             ]
         Box extents -> 
           let (w,h) = extents
           in group [
             rect (w*2) (h*2) |> outlined (solid black),
-            veloLine, info |> move (0,h+16)
+            info |> move (0,h+16),
+            veloLine            
           ] 
   in move pos ready  
 
-scene bodies = 
-  let drawnBodies = map drawBody bodies 
-  in collage 800 800 drawnBodies
+scene bodies = collage 800 800 <| map drawBody bodies 
 
 constgravity t = ((0,-0.2), (0,0)) -- constant downward gravity
 sinforce t = ((sin <| radians (t/1000)) * 50, 0) -- sinuoidal sideways force
 counterforces t = ((0,-0.01), (0, t/1000)) -- slowly accellerating upward drift
 
-tick = counterforces <~ foldp (+) 0 (fps 20)
+tick = counterforces <~ foldp (+) 0 (fps 40)
 
-main = scene <~ run someBodies tick
+main = scene <~ run labeledBodies tick
