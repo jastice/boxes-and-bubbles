@@ -76,7 +76,7 @@ bubble radius density restitution pos velocity = {
 Create a box with width 100, height 20, density 1 and restitution 1
 at origin, moving toward the upper right:
 
-    bubble (100,20) 1 1 (0,0) (3,3)
+    box (100,20) 1 1 (0,0) (3,3)
 -}
 box: Vec2 -> Float -> Float -> Vec2 -> Vec2 -> Body
 box (w,h) density restitution pos velocity = {
