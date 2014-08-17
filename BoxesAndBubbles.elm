@@ -60,7 +60,7 @@ at origin, moving toward the upper right:
 
     bubble 100 1 1 (0,0) (3,3)
 -}
-bubble: Float -> Float -> Float -> Vec2 -> Vec2 -> Body
+bubble: Float -> Float -> Float -> Vec2 -> Vec2 -> Body {}
 bubble radius density restitution pos velocity = { 
   pos = pos,
   velocity = velocity, 
@@ -78,7 +78,7 @@ at origin, moving toward the upper right:
 
     box (100,20) 1 1 (0,0) (3,3)
 -}
-box: Vec2 -> Float -> Float -> Vec2 -> Vec2 -> Body
+box: Vec2 -> Float -> Float -> Vec2 -> Vec2 -> Body {}
 box (w,h) density restitution pos velocity = {
   pos = pos,
   velocity = velocity,
@@ -96,7 +96,7 @@ Create bounds with width and height 800, 50 thick walls and 0.6 restitution at t
     bounds (800,800) 50 0.6 (0,0)
 
 -}
-bounds: Vec2 -> Float -> Float -> Vec2 -> [Body]
+bounds: Vec2 -> Float -> Float -> Vec2 -> [Body {}]
 bounds (w,h) thickness restitution (cx,cy) = 
   let (wExt,hExt) = (w/2,h/2)
       halfThick = thickness/2
@@ -121,7 +121,7 @@ Apply a downward gravity and sideways ambient force to bodies:
 
     step (0,-0.2) (20,0) bodies
 -}
-step: Vec2 -> Vec2 -> [Body] -> [Body]      
+step: Vec2 -> Vec2 -> [Body a] -> [Body a]      
 step gravity ambient bodies = 
   map (update gravity ambient) (collide [] bodies)
 
@@ -140,5 +140,5 @@ Run with constant gravity and ambient forces that increase over time, updated at
     run bodies (f <~ foldp (+) 0 (fps 20))
 
 -}
-run: [Body] -> Signal (Vec2,Vec2) -> Signal [Body]
+run: [Body a] -> Signal (Vec2,Vec2) -> Signal [Body a]
 run bodies tick = foldp (uncurry step) bodies tick

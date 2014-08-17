@@ -60,7 +60,7 @@ collisionBoxBubble (posBox,boxExtents) (posBubble,bubbleRadius) =
 
 
 
-collision: Body -> Body -> CollisionResult
+collision: Body a -> Body a -> CollisionResult
 collision body0 body1 = case (body0.shape, body1.shape) of
   (Bubble b0, Bubble b1) -> 
     let b0b1 = minus body1.pos body0.pos
@@ -75,7 +75,7 @@ collision body0 body1 = case (body0.shape, body1.shape) of
 
 
 -- modify bodies' trajectories when they collide
-resolveCollision: CollisionResult -> Body -> Body -> (Body, Body)
+resolveCollision: CollisionResult -> Body a -> Body a -> (Body a, Body a)
 resolveCollision {normal,penetration} b0 b1 = 
   let 
     relativeVelocity = minus b1.velocity b0.velocity
@@ -93,7 +93,7 @@ resolveCollision {normal,penetration} b0 b1 =
 
 -- collide a0 with all the bubbles, modifying b along the way.
 -- return (updated a0, [updated bubbles])
-collideWith: Body -> [Body] -> [Body] -> [Body]
+collideWith: Body a -> [Body a] -> [Body a] -> [Body a]
 collideWith a0 bodies acc = case bodies of
   [] -> a0 :: acc
   (b0 :: bs) -> 
@@ -102,7 +102,7 @@ collideWith a0 bodies acc = case bodies of
     in collideWith a1 bs (b1 :: acc)
 
 -- recursive collision resolution
-collide: [Body] -> [Body] -> [Body]
+collide: [Body a] -> [Body a] -> [Body a]
 collide acc bodies = 
   case bodies of
     [] -> acc
@@ -111,7 +111,7 @@ collide acc bodies =
       in collide (h1::acc) t1
 
 -- update body position with its speed and apply additional forces
-update: Vec2 -> Vec2 -> Body -> Body
+update: Vec2 -> Vec2 -> Body a -> Body a
 update gravity force body = 
   let accelGravity = if body.inverseMass == 0 then (0,0) else gravity
       acceleration = mul2 force body.inverseMass -- f = ma => a = f/m
