@@ -2,11 +2,11 @@ import BoxesAndBubblesBodies (..)
 import BoxesAndBubbles (..)
 import Math2D (mul2)
 
-inf = 1/0
-e0 = 0.8
+inf = 1/0 -- infinity, hell yeah
+e0 = 0.8 -- defalt restitution coefficient
 
---box: (w,h) pos velocity density restitution 
---bubble: radius pos velocity density restitution
+-- box: (w,h) pos velocity density restitution 
+-- bubble: radius pos velocity density restitution
 
 someBodies = [ 
   bubble 30 1 e0(-80,0) (1.5,0),
@@ -57,6 +57,6 @@ constgravity t = ((0,-0.2), (0,0)) -- constant downward gravity
 sinforce t = ((sin <| radians (t/1000)) * 50, 0) -- sinuoidal sideways force
 counterforces t = ((0,-0.01), (0, t/1000)) -- slowly accellerating upward drift
 
-tick = counterforces <~ foldp (+) 0 (fps 40)
+tick = constgravity <~ foldp (+) 0 (fps 40)
 
 main = scene <~ run labeledBodies tick
