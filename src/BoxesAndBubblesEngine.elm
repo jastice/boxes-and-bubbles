@@ -1,4 +1,4 @@
-module BoxesAndBubblesEngine where
+module BoxesAndBubblesEngine (update) where
 -- based roughly on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
 import Math2D (..)
@@ -10,12 +10,11 @@ type CollisionResult = { normal: Vec2, penetration: Float }
 
 -- calculate collision normal, penetration depth of a collision among bubbles
 -- takes distance vector b0b1 and the bubble shapes as argument
--- simple optimization: doesn't compute sqrt unless necessary
 collisionBubbleBubble: Vec2 -> Float -> Float -> CollisionResult
 collisionBubbleBubble b0b1 radius0 radius1 = 
   let
     radiusb0b1 = radius0 + radius1
-    distanceSq = lenSq b0b1
+    distanceSq = lenSq b0b1 -- simple optimization: doesn't compute sqrt unless necessary
   in
     if | distanceSq == 0 -> CollisionResult (1,0) radius0 -- same position, arbitrary normal
        | distanceSq >= radiusb0b1*radiusb0b1 -> CollisionResult (1,0) 0 -- no intersection, arbitrary normal
@@ -23,7 +22,8 @@ collisionBubbleBubble b0b1 radius0 radius1 =
           let d = sqrt distanceSq
           in CollisionResult (div2 b0b1 d) (radiusb0b1 - d)
 
--- takes positions and vector and extension half-lengths of boxes
+-- collide two boxes
+-- takes positions vector and extension half-lengths of boxes
 collisionBoxBox: (Vec2,Vec2) -> (Vec2,Vec2) -> CollisionResult
 collisionBoxBox (pos0,extents0) (pos1,extents1) =
   let dist = minus pos1 pos0 -- vector between box centerpoints
@@ -37,6 +37,8 @@ collisionBoxBox (pos0,extents0) (pos1,extents1) =
                        else CollisionResult (0,1) oy
       else CollisionResult (1,0) 0
 
+-- collide a box with a bubble
+-- takes position and half-length of box, position and radius of bubble
 collisionBoxBubble: (Vec2,Vec2) -> (Vec2,Float) -> CollisionResult
 collisionBoxBubble (posBox,boxExtents) (posBubble,bubbleRadius) = 
   let dist = minus posBubble posBox
@@ -59,18 +61,19 @@ collisionBoxBubble (posBox,boxExtents) (posBubble,bubbleRadius) =
                          else CollisionResult (norm normal) penetration
 
 
-
+-- figure out what collision resolution to use
 collision: Body a -> Body a -> CollisionResult
 collision body0 body1 = case (body0.shape, body1.shape) of
   (Bubble b0, Bubble b1) -> 
     let b0b1 = minus body1.pos body0.pos
     in collisionBubbleBubble b0b1 b0 b1
-  (Box b0, Box b1) -> 
-    collisionBoxBox (body0.pos,b0) (body1.pos,b1)
-  (Box box, Bubble bubble) -> 
+  (Box b0, Box b1) ->
+    collisionBoxBox (body0.pos, b0) (body1.pos, b1)
+  (Box box, Bubble bubble) ->
     collisionBoxBubble (body0.pos, box) (body1.pos, bubble)
-  (Bubble bubble, Box box) -> 
+  (Bubble bubble, Box box) ->
     let res = collisionBoxBubble (body1.pos, box) (body0.pos, bubble)
+    -- negate the normal because the bodies were put in switched relative to their poisition in the list
     in { res | normal <- neg res.normal }
 
 

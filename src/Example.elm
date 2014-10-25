@@ -30,7 +30,7 @@ bodyLabel restitution inverseMass =
 -- and attach it to all the bodies
 labeledBodies = map (\b -> { b | label = bodyLabel b.restitution b.inverseMass }) someBodies
 
--- why yes, it draws a body with label. Or creates the Element rather
+-- why yes, it draws a body with label. Or creates the Element, rather
 drawBody {pos,velocity,inverseMass,restitution,shape,label} = 
   let veloLine = segment (0,0) (mul2 velocity 5) |> traced (solid red)
       info = label |> toText |> centered |> toForm 

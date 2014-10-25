@@ -1,10 +1,10 @@
 {
-    "version": "0.2",
+    "version": "0.3",
     "summary": "A simple-as-possible 2D physics rigid-body physics engine.",
     "description": "A rigid-body physics engine that simulates collisions between boxes (axis-aligned rectangles) and bubbles (circles). Bodies have mass and restitution. Supports gravity and ambient forces.",
     "license": "BSD3",
     "exposed-modules": ["BoxesAndBubbles", "BoxesAndBubblesBodies"],
-    "elm-version": "0.12.3",
+    "elm-version": "0.13",
     "dependencies": {},
     "repository": "https://github.com/jastice/boxes-and-bubbles.git"
 }

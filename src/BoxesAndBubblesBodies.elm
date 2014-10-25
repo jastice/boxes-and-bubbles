@@ -1,4 +1,4 @@
-module BoxesAndBubblesBodies where
+module BoxesAndBubblesBodies (Body,Shape) where
 {-| # Boxes and Bubbles Bodies.
 Defines bodies as used by the Boxes and Bubbles engine. You will need these data types to 
 display and modify bodies being calculated. For creating them, you may prefer the constructor 

@@ -1,4 +1,4 @@
-module BoxesAndBubbles where
+module BoxesAndBubbles (bubble,box,bounds,step,run) where
 {-| The interface for the Boxes and Bubbles physics engine.
 
 # Concepts
