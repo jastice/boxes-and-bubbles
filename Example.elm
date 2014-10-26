@@ -3,7 +3,7 @@ import BoxesAndBubbles (..)
 import Math2D (mul2)
 
 inf = 1/0 -- infinity, hell yeah
-e0 = 0.8 -- defalt restitution coefficient
+e0 = 0.8 -- default restitution coefficient
 
 -- box: (w,h) pos velocity density restitution 
 -- bubble: radius pos velocity density restitution
