@@ -126,7 +126,7 @@ step gravity ambient bodies =
   map (update gravity ambient) (collide [] bodies)
 
 {-| Convenience function to run the physics engine with a signal and a fixed list of bodies. 
-The forces a signal so that you can vary them over time. 
+The forces are a signal so that you can vary them over time. 
 Order of bodies in initial list is not preserved in the output signal.
 
 Applies the step function to (gravity,ambient) tuple from the signal and the 
