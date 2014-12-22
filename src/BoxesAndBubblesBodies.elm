@@ -17,7 +17,7 @@ Type parameter `a` can be used to extend bodies with arbitrary other information
 by your application. For example: label, hit points, an object type ADT, or more low-level, 
 an id used to associate the body with arbitrary other data via a Dict.
 -}
-type Body a = { a |
+type alias Body a = { a |
   pos: Vec2, -- reference position (center)
   velocity: Vec2, -- direction and speed
   inverseMass: Float, -- we usually use only inverse mass for calculations
@@ -31,6 +31,6 @@ A box is defined by its extents (half-width/half-height from the center).
 We use half-lengths because that's what is convenient for calculation, and it's most consistent
 with using radius for circles.
 -}
-data Shape = 
+type Shape = 
     Box Vec2 -- vector of extents (half-widths)
   | Bubble Float -- radius

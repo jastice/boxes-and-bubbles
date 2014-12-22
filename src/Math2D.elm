@@ -2,7 +2,7 @@ module Math2D where
 
 -- just vector things
 
-type Vec2 = (Float,Float)
+type alias Vec2 = (Float,Float)
 
 plus: Vec2 -> Vec2 -> Vec2
 plus (x0,y0) (x1,y1) = (x0+x1,y0+y1)

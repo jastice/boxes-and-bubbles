@@ -1,0 +1,13 @@
+{
+    "version": "1.0.0",
+    "summary": "A simple-as-possible 2D physics rigid-body physics engine.",
+    "repository": "https://github.com/jastice/boxes-and-bubbles.git",
+    "license": "BSD3",
+    "source-directories": [
+        "src"
+    ],
+    "exposed-modules": ["BoxesAndBubbles", "BoxesAndBubblesBodies"],
+    "dependencies": {
+        "elm-lang/core": "1.0.0 <= v < 2.0.0"
+    }
+}

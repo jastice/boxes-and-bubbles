@@ -1,12 +1,13 @@
 module BoxesAndBubblesEngine (update, collide) where
 -- based roughly on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
+import List (..)
 import Math2D (..)
 import BoxesAndBubblesBodies (Body, Shape(..))
 
 -- collision calculation for different types of bodies
 
-type CollisionResult = { normal: Vec2, penetration: Float }
+type alias CollisionResult = { normal: Vec2, penetration: Float }
 
 -- calculate collision normal, penetration depth of a collision among bubbles
 -- takes distance vector b0b1 and the bubble shapes as argument
@@ -96,7 +97,7 @@ resolveCollision {normal,penetration} b0 b1 =
 
 -- collide a0 with all the bubbles, modifying b along the way.
 -- return (updated a0, [updated bubbles])
-collideWith: Body a -> [Body a] -> [Body a] -> [Body a]
+collideWith: Body a -> List (Body a) -> List (Body a) -> List (Body a)
 collideWith a0 bodies acc = case bodies of
   [] -> a0 :: acc
   (b0 :: bs) -> 
@@ -105,7 +106,7 @@ collideWith a0 bodies acc = case bodies of
     in collideWith a1 bs (b1 :: acc)
 
 -- recursive collision resolution
-collide: [Body a] -> [Body a] -> [Body a]
+collide: List (Body a) -> List (Body a) -> List (Body a)
 collide acc bodies = 
   case bodies of
     [] -> acc

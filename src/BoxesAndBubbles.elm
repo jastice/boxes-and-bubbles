@@ -48,6 +48,8 @@ Ambient force takes the mass of objects into account, while gravity does not.
 import BoxesAndBubblesEngine (..)
 import BoxesAndBubblesBodies (..)
 import Math2D (Vec2)
+import List
+import Signal (Signal,foldp)
 
 -- constructors
 
@@ -96,7 +98,7 @@ Create bounds with width and height 800, 50 thick walls and 0.6 restitution at t
     bounds (800,800) 50 0.6 (0,0)
 
 -}
-bounds: Vec2 -> Float -> Float -> Vec2 -> [Body {}]
+bounds: Vec2 -> Float -> Float -> Vec2 -> List (Body {})
 bounds (w,h) thickness restitution (cx,cy) = 
   let (wExt,hExt) = (w/2,h/2)
       halfThick = thickness/2
@@ -121,9 +123,9 @@ Apply a downward gravity and sideways ambient force to bodies:
 
     step (0,-0.2) (20,0) bodies
 -}
-step: Vec2 -> Vec2 -> [Body a] -> [Body a]      
+step: Vec2 -> Vec2 -> List (Body a) -> List (Body a)
 step gravity ambient bodies = 
-  map (update gravity ambient) (collide [] bodies)
+  List.map (update gravity ambient) (collide [] bodies)
 
 {-| Convenience function to run the physics engine with a signal and a fixed list of bodies. 
 The forces are a signal so that you can vary them over time. 
@@ -140,5 +142,5 @@ Run with constant gravity and ambient forces that increase over time, updated at
     run bodies (f <~ foldp (+) 0 (fps 20))
 
 -}
-run: [Body a] -> Signal (Vec2,Vec2) -> Signal [Body a]
+run: List (Body a) -> Signal (Vec2,Vec2) -> Signal (List (Body a))
 run bodies tick = foldp (uncurry step) bodies tick

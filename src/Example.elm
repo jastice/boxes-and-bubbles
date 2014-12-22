@@ -1,6 +1,14 @@
 import BoxesAndBubblesBodies (..)
 import BoxesAndBubbles (..)
 import Math2D (mul2)
+import List (map)
+import Graphics.Collage (..)
+import Graphics.Element (..)
+import Color (..)
+import Text (fromString, centered)
+import Signal ((<~), foldp)
+import Time (fps)
+import String
 
 inf = 1/0 -- infinity, hell yeah
 e0 = 0.8 -- default restitution coefficient
@@ -20,12 +28,9 @@ someBodies = [
   box (20,40) 1 e0 (200,-200) (-1,-1)
   ] ++ bounds (750,750) 100 e0 (0,0)
 
--- extending bodies with an arbitrary string label
-type Labeled = { label: String }
-
 -- we'll just compute the label from the data in the body
 bodyLabel restitution inverseMass = 
-  ["e = ", show restitution, "\nm = ", show (round (1/inverseMass))] |> concat
+  ["e = ", toString restitution, "\nm = ", toString (round (1/inverseMass))] |> String.concat
 
 -- and attach it to all the bodies
 labeledBodies = map (\b -> { b | label = bodyLabel b.restitution b.inverseMass }) someBodies
@@ -33,7 +38,7 @@ labeledBodies = map (\b -> { b | label = bodyLabel b.restitution b.inverseMass }
 -- why yes, it draws a body with label. Or creates the Element, rather
 drawBody {pos,velocity,inverseMass,restitution,shape,label} = 
   let veloLine = segment (0,0) (mul2 velocity 5) |> traced (solid red)
-      info = label |> toText |> centered |> toForm 
+      info = label |> fromString |> centered |> toForm 
 
       ready = case shape of
         Bubble radius ->
@@ -53,6 +58,7 @@ drawBody {pos,velocity,inverseMass,restitution,shape,label} =
 
 scene bodies = collage 800 800 <| map drawBody bodies 
 
+-- different force functions to experiment with
 constgravity t = ((0,-0.2), (0,0)) -- constant downward gravity
 sinforce t = ((sin <| radians (t/1000)) * 50, 0) -- sinuoidal sideways force
 counterforces t = ((0,-0.01), (0, t/1000)) -- slowly accellerating upward drift
