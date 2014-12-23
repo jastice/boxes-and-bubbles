@@ -1,5 +1,5 @@
 module BoxesAndBubblesEngine (update, collide) where
--- based roughly on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
+-- based loosely on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
 import List (..)
 import Math2D (..)
@@ -10,7 +10,7 @@ import BoxesAndBubblesBodies (Body, Shape(..))
 type alias CollisionResult = { normal: Vec2, penetration: Float }
 
 -- calculate collision normal, penetration depth of a collision among bubbles
--- takes distance vector b0b1 and the bubble shapes as argument
+-- takes distance vector b0b1 and the bubble radii as argument
 collisionBubbleBubble: Vec2 -> Float -> Float -> CollisionResult
 collisionBubbleBubble b0b1 radius0 radius1 = 
   let
@@ -90,13 +90,14 @@ resolveCollision {normal,penetration} b0 b1 =
       restitution = min b0.restitution b1.restitution -- collision restitution
       invMassSum = (b0.inverseMass + b1.inverseMass)
       j = (-(1 + restitution) * velocityAlongNormal) / invMassSum -- impulse scalar
-      impulse = mul2 normal j
+      impulse = mul2 normal j -- impulse vector
     in ({ b0 | velocity <- minus b0.velocity (mul2 impulse b0.inverseMass) },
         { b1 | velocity <- plus b1.velocity (mul2 impulse b1.inverseMass) })
 
 
--- collide a0 with all the bubbles, modifying b along the way.
--- return (updated a0, [updated bubbles])
+-- collide a0 with all the bodies, modifying b along the way.
+-- third argument is accumulator to make it tail recursive, even though Elm doesn't support TCO currently
+-- return (updated a0, [updated bodies])
 collideWith: Body a -> List (Body a) -> List (Body a) -> List (Body a)
 collideWith a0 bodies acc = case bodies of
   [] -> a0 :: acc
