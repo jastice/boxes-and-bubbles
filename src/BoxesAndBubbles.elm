@@ -47,8 +47,6 @@ Ambient force takes the mass of objects into account, while gravity does not.
 
 import BoxesAndBubblesEngine (..)
 import BoxesAndBubblesBodies (..)
---import Math2D (Vec2)
---import List
 import Math.Vector2 (..)
 import Array (..)
 import Signal (Signal,foldp)
@@ -132,7 +130,7 @@ Apply a downward gravity and sideways ambient force to bodies:
 -}
 step: Vec2 -> Vec2 -> Array (Body a) -> Array (Body a)
 step gravity ambient bodies =
-  map (update gravity ambient) (collide empty bodies)
+  map (update gravity ambient) (collide bodies)
 
 {-| Convenience function to run the physics engine with a signal and a fixed list of bodies.
 The forces are a signal so that you can vary them over time.

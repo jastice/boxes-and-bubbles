@@ -1,12 +1,10 @@
 module BoxesAndBubblesEngine (update, collide) where
 -- based loosely on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
---import List (..)
---import Math2D (..)
 import Array (..)
 import Math.Vector2 (Vec2, vec2, add, sub, lengthSquared, normalize, scale, toTuple, fromTuple, getX, getY, dot)
 import BoxesAndBubblesBodies (Body, Shape(..))
-
+import Trampoline (..)
 -- collision calculation for different types of bodies
 
 type alias CollisionResult = { normal: Vec2, penetration: Float }
@@ -98,49 +96,34 @@ resolveCollision {normal,penetration} b0 b1 =
         { b1 | velocity <- b1.velocity `add` (scale b1.inverseMass impulse) })
 
 
--- collide a0 with all the bodies, modifying b along the way.
--- third argument is accumulator to make it tail recursive, even though Elm doesn't support TCO currently
--- return (updated a0, [updated bodies])
-collideWith: Body a -> Array (Body a) -> Array (Body a) -> Array (Body a)
-collideWith a0 bodies acc =
-  case get 0 bodies of
-    Nothing -> push a0 acc
-    Just b0 ->
-      let collisionResult = collision a0 b0
-          (a1, b1) = resolveCollision collisionResult a0 b0
-          bs = slice 1 (length bodies) bodies
-      in collideWith a1 bs (push b1 acc)
 
-{-}
-collideWith a0 bodies acc = case bodies of
-  [] -> a0 :: acc
-  (b0 :: bs) ->
-    let collisionResult = collision a0 b0
-        (a1,b1) = resolveCollision collisionResult a0 b0
-    in collideWith a1 bs (b1 :: acc)
--}
--- recursive collision resolution
-collide: Array (Body a) -> Array (Body a) -> Array (Body a)
-collide acc bodies =
-  case get 0 bodies of
-    Nothing -> acc
-    Just h ->
-      let t = slice 1 (length bodies) bodies
-          collideWithResult = collideWith h t empty
-          t1 = slice 1 (length collideWithResult) collideWithResult
-      in
-        case get 0 collideWithResult of
-          Nothing -> acc
-          Just h1 -> collide (push h1 acc) t1
 
-{-}
-collide acc bodies =
-  case bodies of
-    [] -> acc
-    h::t ->
-      let (h1 :: t1) = collideWith h t []
-      in collide (h1::acc) t1
--}
+collideWith : Body a -> Array (Body a) -> Array (Body a)
+collideWith body bodies =
+  let collideAndRespond body0 body1 =
+        if body0 == body1 then body0
+        else let collisionResult = collision body0 body1
+                 (updatedBody0, updatedBody1) = resolveCollision collisionResult body0 body1
+             in
+               updatedBody1
+  in
+    map (collideAndRespond body) bodies
+
+
+collide : Array (Body a) -> Array (Body a)
+collide bodies =
+  trampoline <|
+    collide' bodies bodies
+
+
+collide' : Array (Body a) -> Array (Body a) -> Trampoline (Array (Body a))
+collide' accumulator bodies =
+  case get 0 bodies of
+    Nothing -> Done accumulator
+    Just body ->
+      Continue (\() ->
+        collide' (collideWith body accumulator) (slice 1 (length bodies) bodies)
+      )
 
 
 -- update body position with its speed and apply additional forces

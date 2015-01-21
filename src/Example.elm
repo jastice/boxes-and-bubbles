@@ -1,7 +1,5 @@
 import BoxesAndBubblesBodies (..)
 import BoxesAndBubbles (..)
---import Math2D (mul2)
---import List (map)
 import Array (..)
 import Math.Vector2 (vec2, toTuple, scale)
 import Graphics.Collage (Form, move, filled, segment, traced, solid, toForm, group, circle, outlined, rect, collage)
@@ -9,7 +7,7 @@ import Graphics.Element (..)
 import Color (..)
 import Text (fromString, centered)
 import Signal ((<~), foldp)
-import Time (fps)
+import AnimationFrame
 import String
 
 inf = 1/0 -- infinity, hell yeah
@@ -67,6 +65,6 @@ constgravity t = ((vec2 0 -0.2), (vec2 0 0)) -- constant downward gravity
 sinforce t = (vec2 ((sin <| radians (t/1000)) * 50) 0) -- sinuoidal sideways force
 counterforces t = ((vec2 0 -0.01), (vec2 0 (t/1000))) -- slowly accellerating upward drift
 
-tick = constgravity <~ foldp (+) 0 (fps 40)
+tick = constgravity <~ foldp (+) 0 AnimationFrame.frame
 
 main = scene <~ run labeledBodies tick

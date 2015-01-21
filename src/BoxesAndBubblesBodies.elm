@@ -8,7 +8,6 @@ functions in the BoxesAndBubbles module.
 
 -}
 
---import Math2D (Vec2)
 import Math.Vector2 (..)
 
 {-| A rigid body in the Boxes and Bubbles universe, as used internally by the engine.
