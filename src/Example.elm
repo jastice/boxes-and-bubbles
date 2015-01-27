@@ -60,8 +60,8 @@ scene bodies = collage 800 800 <| map drawBody bodies
 
 -- different force functions to experiment with
 constgravity t = ((0,-0.2), (0,0)) -- constant downward gravity
-sinforce t = ((sin <| radians (t/1000)) * 50, 0) -- sinuoidal sideways force
-counterforces t = ((0,-0.01), (0, t/1000)) -- slowly accellerating upward drift
+sinforce t = ((sin <| radians (t/1000)) * 50, 0) -- sinusoidal sideways force
+counterforces t = ((0,-0.01), (0, t/1000)) -- small gravity, slowly accellerating upward drift
 
 tick = constgravity <~ foldp (+) 0 (fps 40)
 
