@@ -1,6 +1,8 @@
 Boxes and Bubbles
 =================
 
+[![Join the chat at https://gitter.im/jastice/boxes-and-bubbles](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jastice/boxes-and-bubbles?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A simple-as-possible 2D physics rigid-body physics engine for Elm.
 Supports only bubbles (circles) and boxes (axis-aligned rectangles).
 
