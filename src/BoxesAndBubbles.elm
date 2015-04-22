@@ -45,11 +45,11 @@ Ambient force takes the mass of objects into account, while gravity does not.
 
 -}
 
-import BoxesAndBubblesEngine (..)
-import BoxesAndBubblesBodies (..)
-import Math2D (Vec2)
+import BoxesAndBubblesEngine exposing (..)
+import BoxesAndBubblesBodies exposing (..)
+import Math2D exposing (Vec2)
 import List
-import Signal (Signal,foldp)
+import Signal exposing (Signal,foldp)
 
 -- constructors
 

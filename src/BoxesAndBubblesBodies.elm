@@ -8,7 +8,7 @@ functions in the BoxesAndBubbles module.
 
 -}
 
-import Math2D (Vec2)
+import Math2D exposing (Vec2)
 
 {-| A rigid body in the Boxes and Bubbles universe, as used internally by the engine.
 Mass is stored as inverse, because it is more convenient for calculation.

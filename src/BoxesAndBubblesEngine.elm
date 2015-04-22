@@ -1,9 +1,9 @@
 module BoxesAndBubblesEngine (update, collide) where
 -- based loosely on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
-import List (..)
-import Math2D (..)
-import BoxesAndBubblesBodies (Body, Shape(..))
+import List exposing (..)
+import Math2D exposing (..)
+import BoxesAndBubblesBodies exposing (Body, Shape(..))
 
 -- collision calculation for different types of bodies
 
