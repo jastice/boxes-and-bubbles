@@ -1,5 +1,9 @@
 module BoxesAndBubblesEngine (update, collide, collideWith) where
 -- based loosely on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
+{-| The actual physics implementation of Boxes and Bubbles.
+Exposes some functions to allow users to fine-tune their applications.
+Please consult the source code to understand these functions.
+-}
 
 import List exposing (..)
 import Math2D exposing (..)
