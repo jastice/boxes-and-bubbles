@@ -1,4 +1,4 @@
-module BoxesAndBubblesEngine (update, collide) where
+module BoxesAndBubblesEngine (update, collide, collideWith) where
 -- based loosely on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
 import List exposing (..)
