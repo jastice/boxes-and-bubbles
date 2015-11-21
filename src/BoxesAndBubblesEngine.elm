@@ -1,9 +1,17 @@
 module BoxesAndBubblesEngine (update, collide, collideWith) where
--- based loosely on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 {-| The actual physics implementation of Boxes and Bubbles.
-Exposes some functions to allow users to fine-tune their applications.
+
+## Exposed functions
+
+Exposes some internal functions mostly for use in the actual API 
+and to let you fine-tune your application.
 Please consult the source code to understand these functions.
+No implication of API stability.
+
+@docs update, collide, collideWith
 -}
+
+-- based loosely on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
 import List exposing (..)
 import Math2D exposing (..)
@@ -21,11 +29,13 @@ collisionBubbleBubble b0b1 radius0 radius1 =
     radiusb0b1 = radius0 + radius1
     distanceSq = lenSq b0b1 -- simple optimization: doesn't compute sqrt unless necessary
   in
-    if | distanceSq == 0 -> CollisionResult (1,0) radius0 -- same position, arbitrary normal
-       | distanceSq >= radiusb0b1*radiusb0b1 -> CollisionResult (1,0) 0 -- no intersection, arbitrary normal
-       | otherwise -> 
-          let d = sqrt distanceSq
-          in CollisionResult (div2 b0b1 d) (radiusb0b1 - d)
+    if distanceSq == 0 then 
+      CollisionResult (1,0) radius0 -- same position, arbitrary normal
+    else if distanceSq >= radiusb0b1*radiusb0b1 then
+      CollisionResult (1,0) 0 -- no intersection, arbitrary normal
+    else
+      let d = sqrt distanceSq
+      in CollisionResult (div2 b0b1 d) (radiusb0b1 - d)
 
 -- collide two boxes
 -- takes positions vector and extension half-lengths of boxes
@@ -79,7 +89,7 @@ collision body0 body1 = case (body0.shape, body1.shape) of
   (Bubble bubble, Box box) ->
     let res = collisionBoxBubble (body1.pos, box) (body0.pos, bubble)
     -- negate the normal because the bodies were put in switched relative to their poisition in the list
-    in { res | normal <- neg res.normal }
+    in { res | normal = neg res.normal }
 
 
 -- modify bodies' trajectories when they collide
@@ -95,13 +105,16 @@ resolveCollision {normal,penetration} b0 b1 =
       invMassSum = (b0.inverseMass + b1.inverseMass)
       j = (-(1 + restitution) * velocityAlongNormal) / invMassSum -- impulse scalar
       impulse = mul2 normal j -- impulse vector
-    in ({ b0 | velocity <- minus b0.velocity (mul2 impulse b0.inverseMass) },
-        { b1 | velocity <- plus b1.velocity (mul2 impulse b1.inverseMass) })
+    in ({ b0 | velocity = minus b0.velocity (mul2 impulse b0.inverseMass) },
+        { b1 | velocity = plus b1.velocity (mul2 impulse b1.inverseMass) })
 
 
--- collide a0 with all the bodies, modifying b along the way.
--- third argument is accumulator to make it tail recursive, even though Elm doesn't support TCO currently
--- return (updated a0, [updated bodies])
+{-| Collide a0 with all the bodies, modifying b along the way.
+
+   return (updated a0, [updated bodies])
+
+   Internal method, exposed only for your convenience. No implication of API stability.
+-}
 collideWith: Body a -> List (Body a) -> List (Body a) -> List (Body a)
 collideWith a0 bodies acc = case bodies of
   [] -> a0 :: acc
@@ -110,23 +123,32 @@ collideWith a0 bodies acc = case bodies of
         (a1,b1) = resolveCollision collisionResult a0 b0
     in collideWith a1 bs (b1 :: acc)
 
--- recursive collision resolution
+{-| Recursive collision resolution.
+
+Internal method, exposed only for your convenience. 
+No implication of API stability.
+-}
 collide: List (Body a) -> List (Body a) -> List (Body a)
 collide acc bodies = 
   case bodies of
     [] -> acc
     h::t -> 
-      let (h1 :: t1) = collideWith h t []
-      in collide (h1::acc) t1
+      case collideWith h t [] of
+        [] -> []
+        (h1 :: t1) -> collide (h1::acc) t1
 
--- update body position with its speed and apply additional forces
+{-| Update body position with its speed and apply additional forces.
+
+May be used to gain a more fine-grained control over what forces affect.
+No implication of API stability.
+-}
 update: Vec2 -> Vec2 -> Body a -> Body a
 update gravity force body = 
   let accelGravity = if body.inverseMass == 0 then (0,0) else gravity
       acceleration = mul2 force body.inverseMass -- f = ma => a = f/m
       velocityNew = plus accelGravity <| plus body.velocity acceleration
       posNew = plus body.pos body.velocity
-  in { body | pos <- posNew, velocity <- velocityNew }
+  in { body | pos = posNew, velocity = velocityNew }
 
 
 

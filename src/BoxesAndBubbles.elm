@@ -35,9 +35,9 @@ Ambient force takes the mass of objects into account, while gravity does not.
 
 # Functions
 
-## Constructors
+## Constructors and helpers
 
-@docs bubble, box
+@docs bubble, box, bounds
 
 ## Running the simulation
 
@@ -55,20 +55,21 @@ import Signal exposing (Signal,foldp)
 
 {-| Create a bubble. Mass is derived from density and size.
 
-    bubble radius density restitution position velocity
+    bubble radius density restitution position velocity meta
 
 Create a bubble with radius 100 with density 1 and restitution 1
-at origin, moving toward the upper right:
+at origin and a string "tag", moving toward the upper right:
 
-    bubble 100 1 1 (0,0) (3,3)
+    bubble 100 1 1 (0,0) (3,3) "tag"
 -}
-bubble: Float -> Float -> Float -> Vec2 -> Vec2 -> Body {}
-bubble radius density restitution pos velocity = { 
+bubble: Float -> Float -> Float -> Vec2 -> Vec2 -> meta -> Body meta
+bubble radius density restitution pos velocity meta = { 
   pos = pos,
   velocity = velocity, 
   inverseMass = 1/(pi*radius*radius*density), 
   restitution = restitution,
-  shape = Bubble radius
+  shape = Bubble radius,
+  meta = meta
   }
 
 {-| Create a box. Mass is derived from density and size.
@@ -80,34 +81,36 @@ at origin, moving toward the upper right:
 
     box (100,20) 1 1 (0,0) (3,3)
 -}
-box: Vec2 -> Float -> Float -> Vec2 -> Vec2 -> Body {}
-box (w,h) density restitution pos velocity = {
+box: Vec2 -> Float -> Float -> Vec2 -> Vec2 -> meta -> Body meta
+box (w,h) density restitution pos velocity meta = {
   pos = pos,
   velocity = velocity,
   inverseMass = 1/(w*h*density),
   restitution = restitution,
-  shape = Box (w/2,h/2)
+  shape = Box (w/2,h/2),
+  meta = meta
   }
 
 {-| Create a bounding box made up of boxes with infinite mass.
 
-    bounds (width,height) thickness restitution center
+    bounds (width,height) thickness restitution center meta
 
-Create bounds with width and height 800, 50 thick walls and 0.6 restitution at the origin:
+Create bounds with width and height 800, 50 thick walls and 0.6 restitution and a String tag
+at the origin:
 
-    bounds (800,800) 50 0.6 (0,0)
+    bounds (800,800) 50 0.6 (0,0) "tag"
 
 -}
-bounds: Vec2 -> Float -> Float -> Vec2 -> List (Body {})
-bounds (w,h) thickness restitution (cx,cy) = 
+bounds: Vec2 -> Float -> Float -> Vec2 -> meta -> List (Body meta)
+bounds (w,h) thickness restitution (cx,cy) meta = 
   let (wExt,hExt) = (w/2,h/2)
       halfThick = thickness/2
       inf = 1/0
   in [
-    box (w,thickness) inf restitution (cx, hExt+halfThick) (0,0),
-    box (w,thickness) inf restitution (cx, -(hExt+halfThick)) (0,0),
-    box (thickness,h) inf restitution (wExt+halfThick, cy) (0,0),
-    box (thickness,h) inf restitution (-(hExt+halfThick), cy) (0,0)
+    box (w,thickness) inf restitution (cx, hExt+halfThick) (0,0) meta,
+    box (w,thickness) inf restitution (cx, -(hExt+halfThick)) (0,0) meta,
+    box (thickness,h) inf restitution (wExt+halfThick, cy) (0,0) meta,
+    box (thickness,h) inf restitution (-(hExt+halfThick), cy) (0,0) meta
   ]
 
 {-| Perform a step in the physics simulation. Applies forces to objects and updates them based
@@ -123,7 +126,7 @@ Apply a downward gravity and sideways ambient force to bodies:
 
     step (0,-0.2) (20,0) bodies
 -}
-step: Vec2 -> Vec2 -> List (Body a) -> List (Body a)
+step: Vec2 -> Vec2 -> List (Body meta) -> List (Body meta)
 step gravity ambient bodies = 
   List.map (update gravity ambient) (collide [] bodies)
 
@@ -142,5 +145,5 @@ Run with constant gravity and ambient forces that increase over time, updated at
     run bodies (f <~ foldp (+) 0 (fps 20))
 
 -}
-run: List (Body a) -> Signal (Vec2,Vec2) -> Signal (List (Body a))
+run: List (Body meta) -> Signal (Vec2,Vec2) -> Signal (List (Body meta))
 run bodies tick = foldp (uncurry step) bodies tick

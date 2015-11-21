@@ -1,13 +1,13 @@
-import BoxesAndBubblesBodies (..)
-import BoxesAndBubbles (..)
-import Math2D (mul2)
-import List (map)
-import Graphics.Collage (..)
-import Graphics.Element (..)
-import Color (..)
-import Text (fromString, centered)
-import Signal ((<~), foldp)
-import Time (fps)
+import BoxesAndBubblesBodies exposing (..)
+import BoxesAndBubbles exposing (..)
+import Math2D exposing (mul2)
+import List exposing (map)
+import Graphics.Collage exposing (..)
+import Graphics.Element exposing (..)
+import Color exposing (..)
+import Text exposing (fromString)
+import Signal exposing (foldp)
+import Time exposing (fps)
 import String
 
 inf = 1/0 -- infinity, hell yeah
@@ -16,29 +16,38 @@ e0 = 0.8 -- default restitution coefficient
 -- box: (w,h) pos velocity density restitution 
 -- bubble: radius pos velocity density restitution
 
+defaultLabel = ""
+
 someBodies = [ 
-  bubble 30 1 e0(-80,0) (1.5,0),
-  bubble 70 inf 0 (80,0) (0,0) ,
-  bubble 40 1 e0 (0,200) (0.4,-3.0),
-  bubble 80 0.1 e0 (300,-280) (-2,1),
-  bubble 15 5 0.4 (300,300) (-4,-3),
-  bubble 40 1 e0 (200,200) (-5,-1),
-  box (100,100) 1 e0 (300,0) (0,0),
-  box (20,20) 1 e0 (-200,0) (3,0),
-  box (20,40) 1 e0 (200,-200) (-1,-1)
-  ] ++ bounds (750,750) 100 e0 (0,0)
+  bubble 30 1 e0(-80,0) (1.5,0) defaultLabel,
+  bubble 70 inf 0 (80,0) (0,0) defaultLabel,
+  bubble 40 1 e0 (0,200) (0.4,-3.0) defaultLabel,
+  bubble 80 0.1 e0 (300,-280) (-2,1) defaultLabel,
+  bubble 15 5 0.4 (300,300) (-4,-3) defaultLabel,
+  bubble 40 1 e0 (200,200) (-5,-1) defaultLabel,
+  box (100,100) 1 e0 (300,0) (0,0) defaultLabel,
+  box (20,20) 1 e0 (-200,0) (3,0) defaultLabel,
+  box (20,40) 1 e0 (200,-200) (-1,-1) defaultLabel
+  ] ++ bounds (750,750) 100 e0 (0,0) defaultLabel
 
 -- we'll just compute the label from the data in the body
 bodyLabel restitution inverseMass = 
   ["e = ", toString restitution, "\nm = ", toString (round (1/inverseMass))] |> String.concat
 
+type alias Labeled = { label: String }
+type alias LabeledBody = Body Labeled
+
+--attachlabel label body = 
+--  let labelRecord = { label = label }
+--  in { body }
+
 -- and attach it to all the bodies
-labeledBodies = map (\b -> { b | label = bodyLabel b.restitution b.inverseMass }) someBodies
+labeledBodies = map (\b -> { b | meta = bodyLabel b.restitution b.inverseMass }) someBodies
 
 -- why yes, it draws a body with label. Or creates the Element, rather
-drawBody {pos,velocity,inverseMass,restitution,shape,label} = 
+drawBody ({pos,velocity,inverseMass,restitution,shape,meta}) = 
   let veloLine = segment (0,0) (mul2 velocity 5) |> traced (solid red)
-      info = label |> fromString |> centered |> toForm 
+      info = meta |> fromString |> centered |> toForm 
 
       ready = case shape of
         Bubble radius ->
@@ -63,6 +72,6 @@ constgravity t = ((0,-0.2), (0,0)) -- constant downward gravity
 sinforce t = ((sin <| radians (t/1000)) * 50, 0) -- sinusoidal sideways force
 counterforces t = ((0,-0.01), (0, t/1000)) -- small gravity, slowly accellerating upward drift
 
-tick = constgravity <~ foldp (+) 0 (fps 40)
+tick = Signal.map constgravity (foldp (+) 0 (fps 40))
 
-main = scene <~ run labeledBodies tick
+main = Signal.map scene (run labeledBodies tick)

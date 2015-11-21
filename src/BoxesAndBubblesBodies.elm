@@ -13,16 +13,17 @@ import Math2D exposing (Vec2)
 {-| A rigid body in the Boxes and Bubbles universe, as used internally by the engine.
 Mass is stored as inverse, because it is more convenient for calculation.
 
-Type parameter `a` can be used to extend bodies with arbitrary other information used
-by your application. For example: label, hit points, an object type ADT, or more low-level, 
+Type parameter `meta` can be used to attach arbitrary other information used
+by your application to bodies. For example: label, hit points, an object type ADT, or more low-level, 
 an id used to associate the body with arbitrary other data via a Dict.
 -}
-type alias Body a = { a |
+type alias Body meta = {
   pos: Vec2, -- reference position (center)
   velocity: Vec2, -- direction and speed
   inverseMass: Float, -- we usually use only inverse mass for calculations
   restitution: Float, -- bounciness factor
-  shape: Shape
+  shape: Shape,
+  meta: meta
 }
 
 {-| Shape data for a body. 
