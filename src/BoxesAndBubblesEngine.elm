@@ -1,4 +1,4 @@
-module BoxesAndBubblesEngine (update, collide, collideWith) where
+module BoxesAndBubblesEngine exposing (update, collide, collideWith)
 {-| The actual physics implementation of Boxes and Bubbles.
 
 ## Exposed functions
