@@ -1,10 +1,20 @@
-module Example exposing (..)
+module Example exposing (main)
+
+{-| # Overview
+A basic example of using BoxesAndBubbles.
+The drawing is supplied by this module (the BoxesAndBubbles library provides only the model).
+The scene is updated after each animation frame.
+
+# Running
+
+@docs main
+
+-}
 
 import Html.App exposing (program)
-
-import BoxesAndBubblesBodies exposing (..)
+import BoxesAndBubbles.Bodies exposing (..)
 import BoxesAndBubbles exposing (..)
-import Math2D exposing (mul2)
+import BoxesAndBubbles.Math2D exposing (mul2)
 import List exposing (map)
 import Collage exposing (..)
 import Element exposing (..)
@@ -89,6 +99,10 @@ subs = AnimationFrame.diffs Tick
 update: Msg -> Model meta -> Model meta
 update (Tick dt) bodies = step (0, -0.2) (0,0) bodies
 
+{-| Run the animation started from the initial scene defined as `labeledBodies`.
+-}
+
+main : Program Never
 main = program { 
   init = (labeledBodies, Cmd.none)
   , update = (\msg bodies -> ( update msg bodies, Cmd.none ))
