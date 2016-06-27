@@ -1,4 +1,4 @@
-module BoxesAndBubbles (bubble,box,bounds,step,run) where
+module BoxesAndBubbles exposing (bubble,box,bounds,step)
 {-| The interface for the Boxes and Bubbles physics engine.
 
 # Concepts
@@ -41,15 +41,14 @@ Ambient force takes the mass of objects into account, while gravity does not.
 
 ## Running the simulation
 
-@docs step, run
+@docs step
 
 -}
 
-import BoxesAndBubblesEngine exposing (..)
-import BoxesAndBubblesBodies exposing (..)
-import Math2D exposing (Vec2)
+import BoxesAndBubbles.Engine exposing (..)
+import BoxesAndBubbles.Bodies exposing (..)
+import BoxesAndBubbles.Math2D exposing (Vec2)
 import List
-import Signal exposing (Signal,foldp)
 
 -- constructors
 
@@ -130,7 +129,7 @@ step: Vec2 -> Vec2 -> List (Body meta) -> List (Body meta)
 step gravity ambient bodies = 
   List.map (update gravity ambient) (collide [] bodies)
 
-{-| Convenience function to run the physics engine with a signal and a fixed list of bodies. 
+{-   | Convenience function to run the physics engine with a signal and a fixed list of bodies. 
 The forces are a signal so that you can vary them over time. 
 Order of bodies in initial list is not preserved in the output signal.
 
@@ -144,6 +143,7 @@ Run with constant gravity and ambient forces that increase over time, updated at
     f t = ((0,-0.1), (t/1000))
     run bodies (f <~ foldp (+) 0 (fps 20))
 
--}
+
 run: List (Body meta) -> Signal (Vec2,Vec2) -> Signal (List (Body meta))
 run bodies tick = foldp (uncurry step) bodies tick
+-}

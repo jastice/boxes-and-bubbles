@@ -1,4 +1,4 @@
-module BoxesAndBubblesEngine (update, collide, collideWith) where
+module BoxesAndBubbles.Engine exposing (update, collide, collideWith)
 {-| The actual physics implementation of Boxes and Bubbles.
 
 ## Exposed functions
@@ -14,8 +14,8 @@ No implication of API stability.
 -- based loosely on http://gamedevelopment.tutsplus.com/tutorials/gamedev-6331
 
 import List exposing (..)
-import Math2D exposing (..)
-import BoxesAndBubblesBodies exposing (Body, Shape(..))
+import BoxesAndBubbles.Math2D exposing (..)
+import BoxesAndBubbles.Bodies exposing (Body, Shape(..))
 
 -- collision calculation for different types of bodies
 

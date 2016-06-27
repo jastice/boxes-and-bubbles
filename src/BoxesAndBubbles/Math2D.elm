@@ -1,4 +1,4 @@
-module Math2D where
+module BoxesAndBubbles.Math2D exposing (..)
 
 -- just vector things
 

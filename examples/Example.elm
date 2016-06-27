@@ -1,20 +1,36 @@
-import BoxesAndBubblesBodies exposing (..)
+module Example exposing (main)
+
+{-| # Overview
+A basic example of using BoxesAndBubbles.
+The drawing is supplied by this module (the BoxesAndBubbles library provides only the model).
+The scene is updated after each animation frame.
+
+# Running
+
+@docs main
+
+-}
+
+import Html.App exposing (program)
+import BoxesAndBubbles.Bodies exposing (..)
 import BoxesAndBubbles exposing (..)
-import Math2D exposing (mul2)
+import BoxesAndBubbles.Math2D exposing (mul2)
 import List exposing (map)
-import Graphics.Collage exposing (..)
-import Graphics.Element exposing (..)
+import Collage exposing (..)
+import Element exposing (..)
 import Color exposing (..)
 import Text exposing (fromString)
-import Signal exposing (foldp)
-import Time exposing (fps)
+import AnimationFrame
 import String
+import Time exposing (Time)
 
 inf = 1/0 -- infinity, hell yeah
 e0 = 0.8 -- default restitution coefficient
 
 -- box: (w,h) pos velocity density restitution 
 -- bubble: radius pos velocity density restitution
+
+type alias Model meta = List (Body meta)
 
 defaultLabel = ""
 
@@ -42,6 +58,8 @@ type alias LabeledBody = Body Labeled
 --  in { body }
 
 -- and attach it to all the bodies
+
+labeledBodies : Model String
 labeledBodies = map (\b -> { b | meta = bodyLabel b.restitution b.inverseMass }) someBodies
 
 -- why yes, it draws a body with label. Or creates the Element, rather
@@ -65,6 +83,7 @@ drawBody ({pos,velocity,inverseMass,restitution,shape,meta}) =
           ] 
   in move pos ready  
 
+scene : Model String -> Element
 scene bodies = collage 800 800 <| map drawBody bodies 
 
 -- different force functions to experiment with
@@ -72,6 +91,21 @@ constgravity t = ((0,-0.2), (0,0)) -- constant downward gravity
 sinforce t = ((sin <| radians (t/1000)) * 50, 0) -- sinusoidal sideways force
 counterforces t = ((0,-0.01), (0, t/1000)) -- small gravity, slowly accellerating upward drift
 
-tick = Signal.map constgravity (foldp (+) 0 (fps 40))
+type Msg = Tick Time
 
-main = Signal.map scene (run labeledBodies tick)
+subs : Sub Msg
+subs = AnimationFrame.diffs Tick
+
+update: Msg -> Model meta -> Model meta
+update (Tick dt) bodies = step (0, -0.2) (0,0) bodies
+
+{-| Run the animation started from the initial scene defined as `labeledBodies`.
+-}
+
+main : Program Never
+main = program { 
+  init = (labeledBodies, Cmd.none)
+  , update = (\msg bodies -> ( update msg bodies, Cmd.none ))
+  , subscriptions = always subs
+  , view = scene >> Element.toHtml
+  }
