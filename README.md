@@ -6,7 +6,7 @@ Boxes and Bubbles
 A simple-as-possible 2D physics rigid-body physics engine for Elm.
 Supports only bubbles (circles) and boxes (axis-aligned rectangles).
 
-Here's [an example](http://jastice.github.io/boxes-and-bubbles/) ([source](https://github.com/jastice/boxes-and-bubbles/blob/master/src/Example.elm)) of the engine in action.
+Here's [an example](http://jastice.github.io/boxes-and-bubbles/) ([source](https://github.com/jastice/boxes-and-bubbles/blob/master/examples/Example.elm)) of the engine in action. To run the example locally, start elm-reactor in the `examples` directory.
 
 It does this:
 

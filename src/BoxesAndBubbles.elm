@@ -128,22 +128,3 @@ Apply a downward gravity and sideways ambient force to bodies:
 step: Vec2 -> Vec2 -> List (Body meta) -> List (Body meta)
 step gravity ambient bodies = 
   List.map (update gravity ambient) (collide [] bodies)
-
-{-   | Convenience function to run the physics engine with a signal and a fixed list of bodies. 
-The forces are a signal so that you can vary them over time. 
-Order of bodies in initial list is not preserved in the output signal.
-
-Applies the step function to (gravity,ambient) tuple from the signal and the 
-updated list of bodies.
-
-    run tick bodies
-
-Run with constant gravity and ambient forces that increase over time, updated at 20 fps:
-
-    f t = ((0,-0.1), (t/1000))
-    run bodies (f <~ foldp (+) 0 (fps 20))
-
-
-run: List (Body meta) -> Signal (Vec2,Vec2) -> Signal (List (Body meta))
-run bodies tick = foldp (uncurry step) bodies tick
--}

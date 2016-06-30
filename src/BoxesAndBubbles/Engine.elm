@@ -149,7 +149,3 @@ update gravity force body =
       velocityNew = plus accelGravity <| plus body.velocity acceleration
       posNew = plus body.pos body.velocity
   in { body | pos = posNew, velocity = velocityNew }
-
-
-
-
