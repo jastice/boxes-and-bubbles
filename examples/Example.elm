@@ -97,7 +97,7 @@ subs : Sub Msg
 subs = AnimationFrame.diffs Tick
 
 update: Msg -> Model meta -> Model meta
-update (Tick dt) bodies = step (0, -0.2) (0,0) bodies
+update (Tick dt) bodies = uncurry step (constgravity dt) bodies
 
 {-| Run the animation started from the initial scene defined as `labeledBodies`.
 -}
