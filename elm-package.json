@@ -1,5 +1,5 @@
 {
-    "version": "2.0.1",
+    "version": "3.0.0",
     "summary": "A simple-as-possible 2D rigid-body physics engine.",
     "repository": "https://github.com/jastice/boxes-and-bubbles.git",
     "license": "BSD3",
