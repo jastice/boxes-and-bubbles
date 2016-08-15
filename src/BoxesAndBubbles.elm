@@ -109,7 +109,7 @@ bounds (w,h) thickness restitution (cx,cy) meta =
     box (w,thickness) inf restitution (cx, hExt+halfThick) (0,0) meta,
     box (w,thickness) inf restitution (cx, -(hExt+halfThick)) (0,0) meta,
     box (thickness,h) inf restitution (wExt+halfThick, cy) (0,0) meta,
-    box (thickness,h) inf restitution (-(hExt+halfThick), cy) (0,0) meta
+    box (thickness,h) inf restitution (-(wExt+halfThick), cy) (0,0) meta
   ]
 
 {-| Perform a step in the physics simulation. Applies forces to objects and updates them based
