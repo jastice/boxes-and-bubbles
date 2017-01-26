@@ -11,7 +11,7 @@ The scene is updated after each animation frame.
 
 -}
 
-import Html.App exposing (program)
+import Html exposing (program)
 import BoxesAndBubbles.Bodies exposing (..)
 import BoxesAndBubbles exposing (..)
 import BoxesAndBubbles.Math2D exposing (mul2)
@@ -102,7 +102,7 @@ update (Tick dt) bodies = uncurry step (constgravity dt) bodies
 {-| Run the animation started from the initial scene defined as `labeledBodies`.
 -}
 
-main : Program Never
+main : Program Never (Model String) Msg
 main = program { 
   init = (labeledBodies, Cmd.none)
   , update = (\msg bodies -> ( update msg bodies, Cmd.none ))
